@@ -70,12 +70,16 @@ info_list <- vector()
 gr_samples_list <- vector()
 wci_list_lambda <- vector()
 wcim_list_lambda <- vector()
+wci_ftp_list_lambda <- vector()
+wcim_ftp_list_lambda <- vector()
 ciw_list_lambda <- vector()
 ciwm_list_lambda <- vector()
 tdm_list_lambda <- vector()
 td_list_lambda <- vector()
 wci_list_lr <- vector()
 wcim_list_lr <- vector()
+wci_ftp_list_lr <- vector()
+wcim_ftp_list_lr <- vector()
 ciw_list_lr <- vector()
 ciwm_list_lr <- vector()
 tdm_list_lr <- vector()
@@ -123,6 +127,18 @@ for (i in 1:length(dir_names)) {
                             full.names = TRUE,
                             recursive = FALSE)
   
+  wcim_ftp_list_lambda[i] <- list.files(paste(dir_names[i], 
+                                          sep=""), 
+                                    pattern = "within_ci_finaltp_sampled_mean_lambda2",
+                                    full.names = TRUE,
+                                    recursive = FALSE)
+  
+  wci_ftp_list_lambda[i] <- list.files(paste(dir_names[i], 
+                                         sep=""), 
+                                   pattern = "within_ci_finaltp_sampled_list_lambda2",
+                                   full.names = TRUE,
+                                   recursive = FALSE)
+  
   ciwm_list_lambda[i] <- list.files(paste(dir_names[i], 
                                sep=""), 
                              pattern = "ci_width_sampled_mean_lambda2",
@@ -158,6 +174,18 @@ for (i in 1:length(dir_names)) {
                             pattern = "within_ci_sampled_list_lr",
                             full.names = TRUE,
                             recursive = FALSE)
+  
+  wcim_ftp_list_lr[i] <- list.files(paste(dir_names[i], 
+                                          sep=""), 
+                                    pattern = "within_ci_finaltp_sampled_mean_lr",
+                                    full.names = TRUE,
+                                    recursive = FALSE)
+  
+  wci_ftp_list_lr[i] <- list.files(paste(dir_names[i], 
+                                         sep=""), 
+                                   pattern = "within_ci_finaltp_sampled_list_lr",
+                                   full.names = TRUE,
+                                   recursive = FALSE)
   
   ciwm_list_lr[i] <- list.files(paste(dir_names[i], 
                                    sep=""), 
@@ -196,12 +224,16 @@ file.copy(c(info_list,
             gr_samples_list,
             wci_list_lambda,
             wcim_list_lambda,
+            wci_ftp_list_lambda,
+            wcim_ftp_list_lambda,
             ciw_list_lambda,
             ciwm_list_lambda,
             td_list_lambda,
             tdm_list_lambda,
             wci_list_lr,
             wcim_list_lr,
+            wci_ftp_list_lr,
+            wcim_ftp_list_lr,
             ciw_list_lr,
             ciwm_list_lr,
             td_list_lr,
@@ -219,12 +251,16 @@ td_list_lambda <- vector()
 tdm_list_lambda <- vector()
 wci_list_lambda <- vector()
 wcim_list_lambda <- vector()
+wci_ftp_list_lambda <- vector()
+wcim_ftp_list_lambda <- vector()
 ciw_list_lambda <- vector()
 ciwm_list_lambda <- vector()
 td_list_lr <- vector()
 tdm_list_lr <- vector()
 wci_list_lr <- vector()
 wcim_list_lr <- vector()
+wci_ftp_list_lr <- vector()
+wcim_ftp_list_lr <- vector()
 ciw_list_lr <- vector()
 ciwm_list_lr <- vector()
 tsd_list <- vector()
@@ -268,6 +304,18 @@ wci_list_lambda <- list.files(paste(dir_name2,
                        full.names = TRUE,
                        recursive = FALSE)
 
+wcim_ftp_list_lambda <- list.files(paste(dir_name2, 
+                                     sep=""), 
+                               pattern = "within_ci_finaltp_sampled_mean_lambda2",
+                               full.names = TRUE,
+                               recursive = FALSE)
+
+wci_ftp_list_lambda <- list.files(paste(dir_name2, 
+                                    sep=""), 
+                              pattern = "within_ci_finaltp_sampled_list_lambda2",
+                              full.names = TRUE,
+                              recursive = FALSE)
+
 ciwm_list_lambda <- list.files(paste(dir_name2, 
                              sep=""), 
                        pattern = "ci_width_sampled_mean_lambda2",
@@ -303,6 +351,18 @@ wci_list_lr <- list.files(paste(dir_name2,
                        pattern = "within_ci_sampled_list_lr",
                        full.names = TRUE,
                        recursive = FALSE)
+
+wcim_ftp_list_lr <- list.files(paste(dir_name2, 
+                                 sep=""), 
+                           pattern = "within_ci_finaltp_sampled_mean_lr",
+                           full.names = TRUE,
+                           recursive = FALSE)
+
+wci_ftp_list_lr <- list.files(paste(dir_name2, 
+                                sep=""), 
+                          pattern = "within_ci_finaltp_sampled_list_lr",
+                          full.names = TRUE,
+                          recursive = FALSE)
 
 ciwm_list_lr <- list.files(paste(dir_name2, 
                               sep=""), 
@@ -340,12 +400,16 @@ trenddev_tl_lambda <- list()
 trenddev_m_tl_lambda <- list()
 withinci_tl_lambda <- list()
 withinci_m_tl_lambda <- list()
+withinci_ftp_tl_lambda <- list()
+withinci_m_ftp_tl_lambda <- list()
 ciwidth_tl_lambda <- list()
 ciwidth_m_tl_lambda <- list()
 trenddev_tl_lr <- list()
 trenddev_m_tl_lr <- list()
 withinci_tl_lr <- list()
 withinci_m_tl_lr <- list()
+withinci_ftp_tl_lr <- list()
+withinci_m_ftp_tl_lr <- list()
 ciwidth_tl_lr <- list()
 ciwidth_m_tl_lr <- list()
 samp_sdgr_tl <- list()
@@ -388,12 +452,16 @@ for (i in 1:length(info_list)) {
   trenddev_m_lambda <- read.csv(tdm_list_lambda[i])
   withinci_lambda <- read.csv(wci_list_lambda[i])
   withinci_m_lambda <- read.csv(wcim_list_lambda[i])
+  withinci_ftp_lambda <- read.csv(wci_ftp_list_lambda[i])
+  withinci_m_ftp_lambda <- read.csv(wcim_ftp_list_lambda[i])
   ciwidth_lambda <- read.csv(ciw_list_lambda[i])
   ciwidth_m_lambda <- read.csv(ciwm_list_lambda[i])
   trenddev_lr <- read.csv(td_list_lr[i])
   trenddev_m_lr <- read.csv(tdm_list_lr[i])
   withinci_lr <- read.csv(wci_list_lr[i])
   withinci_m_lr <- read.csv(wcim_list_lr[i])
+  withinci_ftp_lr <- read.csv(wci_ftp_list_lr[i])
+  withinci_m_ftp_lr <- read.csv(wcim_ftp_list_lr[i])
   ciwidth_lr <- read.csv(ciw_list_lr[i])
   ciwidth_m_lr <- read.csv(ciwm_list_lr[i])
   tsdata <- readRDS(tsd_list[i])
@@ -415,12 +483,16 @@ for (i in 1:length(info_list)) {
   trenddev_m_tl_lambda[[i]] <- trenddev_m_lambda[[2]]
   withinci_tl_lambda[[i]] <- withinci_lambda$MSI
   withinci_m_tl_lambda[[i]] <- withinci_m_lambda[[2]]
+  withinci_ftp_tl_lambda[[i]] <- withinci_ftp_lambda$MSI
+  withinci_m_ftp_tl_lambda[[i]] <- withinci_m_ftp_lambda[[2]]
   ciwidth_tl_lambda[[i]] <- ciwidth_lambda$MSI
   ciwidth_m_tl_lambda[[i]] <- ciwidth_m_lambda[[2]]
   trenddev_tl_lr[[i]] <- trenddev_lr$MSI
   trenddev_m_tl_lr[[i]] <- trenddev_m_lr[[2]]
   withinci_tl_lr[[i]] <- withinci_lr$MSI
   withinci_m_tl_lr[[i]] <- withinci_m_lr[[2]]
+  withinci_ftp_tl_lr[[i]] <- withinci_ftp_lr$MSI
+  withinci_m_ftp_tl_lr[[i]] <- withinci_m_ftp_lr[[2]]
   ciwidth_tl_lr[[i]] <- ciwidth_lr$MSI
   ciwidth_m_tl_lr[[i]] <- ciwidth_m_lr[[2]]
   samp_sdgr_tl[[i]] <- gr_samples$gr_sd_sample
@@ -454,8 +526,8 @@ for (i in 1:length(info_list)) {
 }
 
  ## create data frame to hold results
-test_results <- data.frame(matrix(NA, ncol = 28, nrow = length(info_list)*20))
-test_results_m <- data.frame(matrix(NA, ncol = 28, nrow = length(info_list)))
+test_results <- data.frame(matrix(NA, ncol = 30, nrow = length(info_list)*20))
+test_results_m <- data.frame(matrix(NA, ncol = 30, nrow = length(info_list)))
 
 # name columns
 colnames(test_results) <- c("ID",
@@ -482,9 +554,11 @@ colnames(test_results) <- c("ID",
                             "TSGenVersion",
                             "TrendDevLambda",
                             "WithinCILambda",
+                            "WithinCIFTPLambda",
                             "CIWidthLambda",
                             "TrendDevLR",
                             "WithinCILR",
+                            "WithinCIFTPLR",
                             "CIWidthLR")
 
 colnames(test_results_m) <- c("ID",
@@ -511,9 +585,11 @@ colnames(test_results_m) <- c("ID",
                             "TSGenVersion",
                             "TrendDevLambda",
                             "WithinCILambda",
+                            "WithinCIFTPLambda",
                             "CIWidthLambda",
                             "TrendDevLR",
                             "WithinCILR",
+                            "WithinCIFTPLR",
                             "CIWidthLR")
 
 counter <- 1
@@ -547,9 +623,11 @@ for (i in 1:length(info_list)) {
     test_results$TSGenVersion[counter] <- tsgenver_tl[i]
     test_results$TrendDevLambda[counter] <- trenddev_tl_lambda[[i]][j]
     test_results$WithinCILambda[counter] <- withinci_tl_lambda[[i]][j]
+    test_results$WithinCIFTPLambda[counter] <- withinci_ftp_tl_lambda[[i]][j]
     test_results$CIWidthLambda[counter] <- ciwidth_tl_lambda[[i]][j]
     test_results$TrendDevLR[counter] <- trenddev_tl_lr[[i]][j]
     test_results$WithinCILR[counter] <- withinci_tl_lr[[i]][j]
+    test_results$WithinCIFTPLR[counter] <- withinci_ftp_tl_lr[[i]][j]
     test_results$CIWidthLR[counter] <- ciwidth_tl_lr[[i]][j]
 
     counter <- counter + 1
@@ -580,9 +658,11 @@ for (i in 1:length(info_list)) {
   test_results_m$TSGenVersion[counter_m] <- tsgenver_tl[i]
   test_results_m$TrendDevLambda[counter_m] <- trenddev_m_tl_lambda[[i]]
   test_results_m$WithinCILambda[counter_m] <- withinci_m_tl_lambda[[i]]
+  test_results_m$WithinCIFTPLambda[counter_m] <- withinci_m_ftp_tl_lambda[[i]]
   test_results_m$CIWidthLambda[counter_m] <- ciwidth_m_tl_lambda[[i]]
   test_results_m$TrendDevLR[counter_m] <- trenddev_m_tl_lr[[i]]
   test_results_m$WithinCILR[counter_m] <- withinci_m_tl_lr[[i]]
+  test_results_m$WithinCIFTPLR[counter_m] <- withinci_m_ftp_tl_lr[[i]]
   test_results_m$CIWidthLR[counter_m] <- ciwidth_m_tl_lr[[i]]
 
   counter_m <- counter_m + 1
@@ -611,15 +691,18 @@ library(tidyr)
 test_res2 <- pivot_longer(test_results_m, cols=c(TrendDevLR, TrendDevLambda), names_to = "Method", values_to = "TrendDev")
 test_res3 <- pivot_longer(test_res2, cols=c(WithinCILR, WithinCILambda), names_to = "Method2", values_to = "WithinCI")
 test_res4 <- pivot_longer(test_res3, cols=c(CIWidthLR, CIWidthLambda), names_to = "Method3", values_to = "CIWidth")
-test_res5 <- test_res4[(test_res4$Method2=="WithinCILR" 
-                        & test_res4$Method=="TrendDevLR" 
-                        & test_res4$Method3=="CIWidthLR") 
-                       | (test_res4$Method2=="WithinCILambda" 
-                          & test_res4$Method=="TrendDevLambda" 
-                          & test_res4$Method3=="CIWidthLambda"),]
+test_res4.5 <- pivot_longer(test_res4, cols=c(WithinCIFTPLR, WithinCIFTPLambda), names_to = "Method4", values_to = "WithinCIFTP")
+test_res5 <- test_res4.5[(test_res4.5$Method2=="WithinCILR" 
+                        & test_res4.5$Method=="TrendDevLR" 
+                        & test_res4.5$Method3=="CIWidthLR"
+                        & test_res4.5$Method4=="WithinCIFTPLR") 
+                       | (test_res4.5$Method2=="WithinCILambda" 
+                          & test_res4.5$Method=="TrendDevLambda" 
+                          & test_res4.5$Method3=="CIWidthLambda"
+                          & test_res4.5$Method4=="WithinCIFTPLambda"),]
 
-test_res5$MeanTSLength <- c(rep(c(10,20,30,40), each=32), rep(20, each=928))
-test_res5$MeanTSSamp <- c(rep(c(10,20,30,40), each=32), rep(20, each=928))
+test_res5$MeanTSLength <- c(rep(c(10,20,30,40), each=32), rep(20, each=1056))
+test_res5$MeanTSSamp <- c(rep(c(10,20,30,40), each=32), rep(20, each=1056))
 
 test_res5$PDWidth <- NA
 test_res5$PDWithin <- NA
@@ -637,7 +720,7 @@ for (i in unique(test_res5$ID)) {
 }
 test_res5$PDRatio <- test_res5$PDWithin - test_res5$PDWidth
 
-
+saveRDS(test_res5, file="analysis_data_prepared.RData")
 ##########################################
 
 
@@ -675,8 +758,12 @@ p2 <- ggplot(test_res5[test_res5$ID>10116 & test_res5$ID<10200,], aes(x=as.facto
 
 ############
 
-p3 <- ggplot(test_res5[test_res5$ID>10200 & test_res5$ID<10300,], aes(x=as.factor(PopSpec), y=WithinCI, fill=Method2))+
+test_res6 <- test_res5 %>%
+  mutate(PopSpec = cut(PopSpec, 10))
+
+p3 <- ggplot(test_res6[test_res6$ID>11000,], aes(x=as.factor(PopSpec), y=WithinCI, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
+  scale_x_discrete(labels=c("10", "20", "50", "100"))+
   ylab("% of 'true' trend within sample C.I.")+
   xlab("Populations Per Species")+
   scale_fill_manual(labels=c("Bootstrap Species Indices", "Rank Envelope"), values=c("orange", "sky blue"))+
@@ -692,10 +779,10 @@ p3 <- ggplot(test_res5[test_res5$ID>10200 & test_res5$ID<10300,], aes(x=as.facto
 
 ############
 
-test_res6 <- test_res5 %>%
+test_res7 <- test_res5 %>%
   mutate(MeanGR = cut(MeanGR, 5))
 
-p4 <- ggplot(test_res6[test_res6$ID>10300 & test_res6$ID<10400,], aes(x=factor(MeanGR), y=WithinCI, fill=Method2))+
+p4 <- ggplot(test_res7[test_res7$ID>10300 & test_res7$ID<10400,], aes(x=factor(MeanGR), y=WithinCI, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("-0.08", "-0.04", "0", "0.04", "0.08"))+
   ylab("")+
@@ -713,10 +800,10 @@ p4 <- ggplot(test_res6[test_res6$ID>10300 & test_res6$ID<10400,], aes(x=factor(M
 
 ############
 
-test_res7 <- test_res5 %>%
+test_res8 <- test_res5 %>%
   mutate(SDGR = cut(SDGR, 5))
 
-p5 <- ggplot(test_res7[test_res7$ID>10400 & test_res7$ID<10500,], aes(x=factor(SDGR), y=WithinCI, fill=Method2))+
+p5 <- ggplot(test_res8[test_res8$ID>10400 & test_res8$ID<10500,], aes(x=factor(SDGR), y=WithinCI, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.05", "0.15", "0.25", "0.35", "0.45"))+
   ylab("")+
@@ -734,10 +821,10 @@ p5 <- ggplot(test_res7[test_res7$ID>10400 & test_res7$ID<10500,], aes(x=factor(S
 
 ############
 
-test_res8 <- test_res5 %>%
+test_res9 <- test_res5 %>%
   mutate(MeanSD = cut(MeanSD, 5))
 
-p6 <- ggplot(test_res8[test_res8$ID>10500 & test_res8$ID<10600,], aes(x=factor(MeanSD), y=WithinCI, fill=Method2))+
+p6 <- ggplot(test_res9[test_res9$ID>10500 & test_res9$ID<10600,], aes(x=factor(MeanSD), y=WithinCI, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.1", "0.3", "0.5", "0.7", "0.9"))+
   ylab("")+
@@ -805,10 +892,14 @@ p2 <- ggplot(test_res5[test_res5$ID>10116 & test_res5$ID<10200,], aes(x=as.facto
 
 ############
 
-p3 <- ggplot(test_res5[test_res5$ID>10200 & test_res5$ID<10300,], aes(x=as.factor(PopSpec), y=TrendDev, fill=Method2))+
+test_res6 <- test_res5 %>%
+  mutate(PopSpec = cut(PopSpec, 10))
+
+p3 <- ggplot(test_res6[test_res6$ID>11000,], aes(x=as.factor(PopSpec), y=TrendDev, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   ylab("Trend Deviation Value")+
   xlab("Populations Per Species")+
+  scale_x_discrete(labels=c("10", "20", "50", "100"))+
   scale_fill_manual(labels=c("Bootstrap Species Indices", "Rank Envelope"), values=c("orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
@@ -822,10 +913,10 @@ p3 <- ggplot(test_res5[test_res5$ID>10200 & test_res5$ID<10300,], aes(x=as.facto
 
 ############
 
-test_res6 <- test_res5 %>%
+test_res7 <- test_res5 %>%
   mutate(MeanGR = cut(MeanGR, 5))
 
-p4 <- ggplot(test_res6[test_res6$ID>10300 & test_res6$ID<10400,], aes(x=factor(MeanGR), y=TrendDev, fill=Method2))+
+p4 <- ggplot(test_res7[test_res7$ID>10300 & test_res7$ID<10400,], aes(x=factor(MeanGR), y=TrendDev, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("-0.08", "-0.04", "0", "0.04", "0.08"))+
   ylab("")+
@@ -843,10 +934,10 @@ p4 <- ggplot(test_res6[test_res6$ID>10300 & test_res6$ID<10400,], aes(x=factor(M
 
 ############
 
-test_res7 <- test_res5 %>%
+test_res8 <- test_res5 %>%
   mutate(SDGR = cut(SDGR, 5))
 
-p5 <- ggplot(test_res7[test_res7$ID>10400 & test_res7$ID<10500,], aes(x=factor(SDGR), y=TrendDev, fill=Method2))+
+p5 <- ggplot(test_res8[test_res8$ID>10400 & test_res8$ID<10500,], aes(x=factor(SDGR), y=TrendDev, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.05", "0.15", "0.25", "0.35", "0.45"))+
   ylab("")+
@@ -864,10 +955,10 @@ p5 <- ggplot(test_res7[test_res7$ID>10400 & test_res7$ID<10500,], aes(x=factor(S
 
 ############
 
-test_res8 <- test_res5 %>%
+test_res9 <- test_res5 %>%
   mutate(MeanSD = cut(MeanSD, 5))
 
-p6 <- ggplot(test_res8[test_res8$ID>10500 & test_res8$ID<10600,], aes(x=factor(MeanSD), y=TrendDev, fill=Method2))+
+p6 <- ggplot(test_res9[test_res9$ID>10500 & test_res9$ID<10600,], aes(x=factor(MeanSD), y=TrendDev, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.1", "0.3", "0.5", "0.7", "0.9"))+
   ylab("")+
@@ -960,10 +1051,14 @@ p2 <- ggplot(test_res5[test_res5$ID>10116 & test_res5$ID<10200,], aes(x=as.facto
 
 ############
 
-p3 <- ggplot(test_res5[test_res5$ID>10200 & test_res5$ID<10300,], aes(x=as.factor(PopSpec), y=log(CIWidth), fill=Method2))+
+test_res6 <- test_res5 %>%
+  mutate(PopSpec = cut(PopSpec, 10))
+
+p3 <- ggplot(test_res6[test_res6$ID>11000,], aes(x=as.factor(PopSpec), y=log(CIWidth), fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   ylab("natural log of C.I. width")+
   xlab("Populations Per Species")+
+  scale_x_discrete(labels=c("10", "20", "50", "100"))+
   scale_fill_manual(labels=c("Bootstrap Species Indices", "Rank Envelope"), values=c("orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
@@ -977,10 +1072,10 @@ p3 <- ggplot(test_res5[test_res5$ID>10200 & test_res5$ID<10300,], aes(x=as.facto
 
 ############
 
-test_res6 <- test_res5 %>%
+test_res7 <- test_res5 %>%
   mutate(MeanGR = cut(MeanGR, 5))
 
-p4 <- ggplot(test_res6[test_res6$ID>10300 & test_res6$ID<10400,], aes(x=factor(MeanGR), y=log(CIWidth), fill=Method2))+
+p4 <- ggplot(test_res7[test_res7$ID>10300 & test_res7$ID<10400,], aes(x=factor(MeanGR), y=log(CIWidth), fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("-0.08", "-0.04", "0", "0.04", "0.08"))+
   ylab("")+
@@ -998,10 +1093,10 @@ p4 <- ggplot(test_res6[test_res6$ID>10300 & test_res6$ID<10400,], aes(x=factor(M
 
 ############
 
-test_res7 <- test_res5 %>%
+test_res8 <- test_res5 %>%
   mutate(SDGR = cut(SDGR, 5))
 
-p5 <- ggplot(test_res7[test_res7$ID>10400 & test_res7$ID<10500,], aes(x=factor(SDGR), y=log(CIWidth), fill=Method2))+
+p5 <- ggplot(test_res8[test_res8$ID>10400 & test_res8$ID<10500,], aes(x=factor(SDGR), y=log(CIWidth), fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.05", "0.15", "0.25", "0.35", "0.45"))+
   ylab("")+
@@ -1019,10 +1114,10 @@ p5 <- ggplot(test_res7[test_res7$ID>10400 & test_res7$ID<10500,], aes(x=factor(S
 
 ############
 
-test_res8 <- test_res5 %>%
+test_res9 <- test_res5 %>%
   mutate(MeanSD = cut(MeanSD, 5))
 
-p6 <- ggplot(test_res8[test_res8$ID>10500 & test_res8$ID<10600,], aes(x=factor(MeanSD), y=log(CIWidth), fill=Method2))+
+p6 <- ggplot(test_res9[test_res9$ID>10500 & test_res9$ID<10600,], aes(x=factor(MeanSD), y=log(CIWidth), fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.1", "0.3", "0.5", "0.7", "0.9"))+
   ylab("")+
@@ -1068,3 +1163,139 @@ ggplot(test_res5[test_res5$ID>10200 & test_res5$ID<10300,], aes(x=as.factor(PopS
         plot.title = element_text(size = 16, hjust = 0.5),
         panel.background = element_rect(fill="white"),
         legend.title.align = 0.5)
+
+
+
+##########################################
+
+
+p1 <- ggplot(test_res5[test_res5$ID<10100,], aes(x=as.factor(MeanTSLength), y=1-WithinCIFTP, fill=Method2))+
+  geom_boxplot(show.legend=TRUE, width=0.5)+
+  ylab("")+
+  xlab("Mean Time Series Length")+
+  scale_fill_manual(labels=c("Bootstrap Species Indices", "Rank Envelope"), values=c("orange", "sky blue"))+
+  labs(fill = "")+
+  theme_classic()+
+  theme(axis.title.x=element_text(size=14),
+        axis.title.y=element_text(size=14),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.background = element_rect(fill="white"),
+        legend.title.align = 0.5)
+
+############
+
+p2 <- ggplot(test_res5[test_res5$ID>10116 & test_res5$ID<10200,], aes(x=as.factor(SampSize), y=1-WithinCIFTP, fill=Method2))+
+  geom_boxplot(show.legend=TRUE, width=0.5)+
+  ylab("")+
+  xlab("Sample Size")+
+  scale_fill_manual(labels=c("Bootstrap Species Indices", "Rank Envelope"), values=c("orange", "sky blue"))+
+  labs(fill = "")+
+  theme_classic()+
+  theme(axis.title.x=element_text(size=14),
+        axis.title.y=element_text(size=14),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.background = element_rect(fill="white"),
+        legend.title.align = 0.5)
+
+############
+
+test_res6 <- test_res5 %>%
+  mutate(PopSpec = cut(PopSpec, 10))
+
+p3 <- ggplot(test_res6[test_res6$ID>11000,], aes(x=as.factor(PopSpec), y=1-WithinCIFTP, fill=Method2))+
+  geom_boxplot(show.legend=TRUE, width=0.5)+
+  scale_x_discrete(labels=c("10", "20", "50", "100"))+
+  ylab("% endpoints of 'true' trend within sample C.I.")+
+  xlab("Populations Per Species")+
+  scale_fill_manual(labels=c("Bootstrap Species Indices", "Rank Envelope"), values=c("orange", "sky blue"))+
+  labs(fill = "")+
+  theme_classic()+
+  theme(axis.title.x=element_text(size=14),
+        axis.title.y=element_text(size=14),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.background = element_rect(fill="white"),
+        legend.title.align = 0.5)
+
+############
+
+test_res7 <- test_res5 %>%
+  mutate(MeanGR = cut(MeanGR, 5))
+
+p4 <- ggplot(test_res7[test_res7$ID>10300 & test_res7$ID<10400,], aes(x=factor(MeanGR), y=1-WithinCIFTP, fill=Method2))+
+  geom_boxplot(show.legend=TRUE, width=0.5)+
+  scale_x_discrete(labels=c("-0.08", "-0.04", "0", "0.04", "0.08"))+
+  ylab("")+
+  xlab("Mean Intrinsic Growth Rate (r)")+
+  scale_fill_manual(labels=c("Bootstrap Species Indices", "Rank Envelope"), values=c("orange", "sky blue"))+
+  labs(fill = "")+
+  theme_classic()+
+  theme(axis.title.x=element_text(size=14),
+        axis.title.y=element_text(size=14),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.background = element_rect(fill="white"),
+        legend.title.align = 0.5)
+
+############
+
+test_res8 <- test_res5 %>%
+  mutate(SDGR = cut(SDGR, 5))
+
+p5 <- ggplot(test_res8[test_res8$ID>10400 & test_res8$ID<10500,], aes(x=factor(SDGR), y=1-WithinCIFTP, fill=Method2))+
+  geom_boxplot(show.legend=TRUE, width=0.5)+
+  scale_x_discrete(labels=c("0.05", "0.15", "0.25", "0.35", "0.45"))+
+  ylab("")+
+  xlab("Standard Deviation in Mean Growth Rate (r)")+
+  scale_fill_manual(labels=c("Bootstrap Species Indices", "Rank Envelope"), values=c("orange", "sky blue"))+
+  labs(fill = "")+
+  theme_classic()+
+  theme(axis.title.x=element_text(size=14),
+        axis.title.y=element_text(size=14),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.background = element_rect(fill="white"),
+        legend.title.align = 0.5)
+
+############
+
+test_res9 <- test_res5 %>%
+  mutate(MeanSD = cut(MeanSD, 5))
+
+p6 <- ggplot(test_res9[test_res9$ID>10500 & test_res9$ID<10600,], aes(x=factor(MeanSD), y=1-WithinCIFTP, fill=Method2))+
+  geom_boxplot(show.legend=TRUE, width=0.5)+
+  scale_x_discrete(labels=c("0.1", "0.3", "0.5", "0.7", "0.9"))+
+  ylab("")+
+  xlab("Mean of the Standard Deviation")+
+  scale_fill_manual(labels=c("Bootstrap Species Indices", "Rank Envelope"), values=c("orange", "sky blue"))+
+  labs(fill = "")+
+  theme_classic()+
+  theme(axis.title.x=element_text(size=14),
+        axis.title.y=element_text(size=14),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.background = element_rect(fill="white"),
+        legend.title.align = 0.5)
+
+############
+library(ggpubr)
+ggarrange(p1, p2, p3, p4, p5, p6, ncol=2, nrow=3, common.legend=TRUE, legend="bottom")
+
+ggsave("bar_plots_withinciftp.tiff",
+       plot = last_plot(),
+       device = tiff,
+       dpi = 1000,
+       height = 8000,
+       width = 8000,
+       units = "px",
+       compression = "lzw")
+
+############
