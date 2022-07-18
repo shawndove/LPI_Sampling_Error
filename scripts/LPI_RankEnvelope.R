@@ -204,7 +204,7 @@ grp.ind.mean.list <- list()
 grp.indl.list <- list()
 # loop over taxonomic groups
 #for (i in 1:length(pop_list)) {
-for (i in 1:4) {
+for (i in 63:72) {
   
   if (!any(!is.na(pop_list[[i]]))) {
     
@@ -224,6 +224,18 @@ for (i in 1:4) {
   # remove all populations with less than 3 data points
   group_data_culled <- cull_fn(group_data, 3, 3, c2)
   #group_data_culled <- cull_fn(group_data, 2, 2, c2)
+  
+  if (!any(!is.na(group_data_culled))) {
+    
+    spec.ind.list[[i]] <- NA
+    grp.ind.list[[i]] <- NA
+    grp.ind.mean.list[[i]] <- NA
+    grp.ci.list[[i]] <- NA
+    grp.indl.list[[i]] <- NA
+    
+    next
+    
+  }
   
   #grp_chain1 <- complete_time_series(group_data_culled, c2, m_colnames2, lambda=TRUE)
   #grp_gam2 <- pop_gam_fn(grp_chain1, c2, m_colnames2, n=1000, lambda=TRUE, resample=FALSE, quality=TRUE)
@@ -266,6 +278,13 @@ for (i in 1:4) {
 
 }
 
+saveRDS(grp.ind.list, file="files/grp_ind_list.RData")
+saveRDS(grp.indl.list, file="files/grp_indl_list.RData")
+saveRDS(grp.ind.mean.list, file="files/grp_ind_mean_list.RData")
+saveRDS(grp.ci.list, file="files/grp_ci_list.RData")
+
+grp.indl.list <- readRDS(file="files/grp_indl_list.RData")
+
 # calculate realm indices and CIs for LPI using rank envelope method
 realm.ind.list <- list()
 realm.ci.list <- list()
@@ -273,19 +292,23 @@ realm.ind.mean.list <- list()
 realm.indl.list <- list()
 # loop over realms
 for (i in unique(realm_list)) {
+#for (i in 12:18) {
   
   regtaxlist <- which(realm_list==i) # get regional taxonomic group ids
   regtaxweights <- Weightings_list[regtaxlist] # get weights for r.t. groups
-  regtaxweights <- regtaxweights * (1 / sum(regtaxweights)) # adjust weights to add up to 1
+  regtaxweights <- regtaxweights * (1 / sum(regtaxweights, na.rm=TRUE)) # adjust weights to add up to 1
   
   rtgrpind <- list()
   counter <- 1
   for (j in regtaxlist) {
-    
-    temp <- grp.ind.list[[j]] # get regional taxonomic group indices
-    temp$GrpID <- j # assign regional taxonomic group id
+    if (is.na(grp.indl.list[[j]])) {
+      temp <- grp.indl.list[[j]]
+      next
+    } 
+    temp <- grp.indl.list[[j]] # get regional taxonomic group indices
     temp_weighted <- temp * regtaxweights[counter] # add weighting
-    rtgrpind[[counter]] <- temp # add to list for realm
+    temp_weighted$GrpID <- j # assign regional taxonomic group id
+    rtgrpind[[counter]] <- temp_weighted # add to list for realm
     counter <- counter + 1 # increase counter
     
   }
@@ -293,11 +316,26 @@ for (i in unique(realm_list)) {
   # convert from list to dataframe
   realm_grpind <- do.call(rbind, rtgrpind)
   
+  if (is.null(realm_grpind)) {
+    
+    realm.ind.list[[i]] <- NA
+    realm.indl.list[[i]] <- NA
+    realm.ind.mean.list[[i]] <- NA
+    realm.ci.list[[i]] <- NA
+    next
+  } 
+
   # create indices for realm
   realm_ind <- aggregate_index_fn(realm_grpind, c, m_colnames, n=1000, n_boot=3000)
   
   # add realm indices to realm indices list
   realm.ind.list[[i]] <- realm_ind
+  
+  # create index for regional taxonomic group
+  realm_indl <- aggregate_index_fn(realm_grpind, c, m_colnames, n=1000, n_boot=3000, stay_lambda=TRUE)
+  
+  # add group index to group indices list
+  realm.indl.list[[i]] <- realm_indl
   
   # calculate mean of realm indices
   realm_ind_mean <- colMeans(realm_ind, na.rm=TRUE)
@@ -313,25 +351,37 @@ for (i in unique(realm_list)) {
   
 }
 
+saveRDS(realm.ind.list, file="files/realm_ind_list.RData")
+saveRDS(realm.indl.list, file="files/realm_indl_list.RData")
+saveRDS(realm.ind.mean.list, file="files/realm_ind_mean_list.RData")
+saveRDS(realm.ci.list, file="files/realm_ci_list.RData")
+
+realm.ind.mean.list <- readRDS(file="files/realm_ind_mean_list.RData")
+
 # calculate system indices and CIs for LPI using rank envelope method
 sys.ind.list <- list()
 sys.ci.list <- list()
 sys.ind.mean.list <- list()
+sys.indl.list <- list()
 # loop over realms
 for (i in unique(sys_realm_list)) {
+#for (i in 3) { 
   
   rlmlist <- which(sys_realm_list==i) # get realm ids
   rlmweights <- Weightingsr_list[rlmlist] # get realm weights
-  rlmweights <- rlmweights * (1 / sum(rlmweights)) # adjust weights to add up to 1
+  rlmweights <- rlmweights * (1 / sum(rlmweights, na.rm=TRUE)) # adjust weights to add up to 1
   
   rlmgrpind <- list()
   counter <- 1
   for (j in rlmlist) {
-    
-    temp <- realm.ind.list[[j]] # get realm indices
-    temp$GrpID <- j # assign realm id
+    if (is.na(realm.indl.list[[j]])) {
+      temp <- realm.indl.list[[j]]
+      next
+    }
+    temp <- realm.indl.list[[j]] # get realm indices
     temp_weighted <- temp * rlmweights[counter] # add weighting
-    rlmgrpind[[counter]] <- temp # add to list for realm
+    temp_weighted$GrpID <- j # assign realm id
+    rlmgrpind[[counter]] <- temp_weighted # add to list for realm
     counter <- counter + 1 # increase counter
     
   }
@@ -344,6 +394,12 @@ for (i in unique(sys_realm_list)) {
   
   # add system indices to system indices list
   sys.ind.list[[i]] <- sys_ind
+  
+  # create indices for system
+  sys_indl <- aggregate_index_fn(sys_grpind, c, m_colnames, n=1000, n_boot=3000, stay_lambda=TRUE)
+  
+  # add system indices to system indices list
+  sys.indl.list[[i]] <- sys_indl
   
   # calculate mean of system indices
   sys_ind_mean <- colMeans(sys_ind, na.rm=TRUE)
@@ -359,10 +415,26 @@ for (i in unique(sys_realm_list)) {
   
 }
 
+saveRDS(sys.ind.list, file="files/sys_ind_list.RData")
+saveRDS(sys.indl.list, file="files/sys_indl_list.RData")
+saveRDS(sys.ind.mean.list, file="files/sys_ind_mean_list.RData")
+saveRDS(sys.ci.list, file="files/sys_ci_list.RData")
+
+sys.ind.mean.list <- readRDS(file="files/sys_ind_mean_list.RData")
+sys.indl.list <- readRDS(file="files/sys_indl_list.RData")
+
 # calculate final index and CIs for LPI using rank envelope method
 
-# get system indices and convert to data frame
-final_grpind <- do.call(rbind, sys_ind_list)
+sysgrpind <- list()
+for (i in 1:3) {
+  temp <- sys.indl.list[[i]] # get system indices
+  temp_weighted <- temp * (1/3) # add weighting
+  temp_weighted$GrpID <- i # assign system id
+  sysgrpind[[i]] <- temp_weighted # add to list for system
+}
+
+# convert to data frame
+final_grpind <- do.call(rbind, sysgrpind)
 
 # create final indices
 final_ind_all <- aggregate_index_fn(final_grpind, c, m_colnames, n=1000, n_boot=3000)
@@ -374,14 +446,30 @@ final_ind <- colMeans(final_ind_all, na.rm=TRUE)
 final_ci <- ci_resample(final_ind_all, m_colnames)
 
 # organize data for plotting
-final_plot_df <- data.frame("Index" <- final_ind, 
-                            "CILow" <- final_ci[1,], 
-                            "CIHigh" <- final_ci[2,],
-                            "Year" <- m_colnames2)
+final_plot_df <- data.frame(Index = as.vector(final_ind), 
+                            CILow = as.vector(as.matrix(lowci)), 
+                            CIHigh = as.vector(as.matrix(highci)),
+                            Year = as.vector(as.numeric(m_colnames)))
+
+# organize data for plotting
+terr_plot_df <- data.frame(Index = as.vector(sys.ind.mean.list[[1]]), 
+                            CILow = as.vector(as.matrix(sys.ci.list[[1]][1,])), 
+                            CIHigh = as.vector(as.matrix(sys.ci.list[[1]][2,])),
+                            Year = as.vector(as.numeric(m_colnames)))# organize data for plotting
+
+fw_plot_df <- data.frame(Index = as.vector(sys.ind.mean.list[[2]]), 
+                            CILow = as.vector(as.matrix(sys.ci.list[[2]][1,])), 
+                            CIHigh = as.vector(as.matrix(sys.ci.list[[2]][2,])),
+                            Year = as.vector(as.numeric(m_colnames)))# organize data for plotting
+
+marine_plot_df <- data.frame(Index = as.vector(sys.ind.mean.list[[3]]), 
+                            CILow = as.vector(as.matrix(sys.ci.list[[3]][1,])), 
+                            CIHigh = as.vector(as.matrix(sys.ci.list[[3]][2,])),
+                            Year = as.vector(as.numeric(m_colnames)))
 
 ## plot index in ggplot
-final_plot <- ggplot(final_plot_df, aes(x = "Year", y = "Index"/100))+
-  geom_ribbon(aes(ymin = "CILow"/100, ymax = "CIHigh"/100), alpha = 0.8, fill = "darkblue")+
+final_plot <- ggplot(marine_plot_df, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
   geom_line(size = 0.6, col = "white")+
   geom_hline(yintercept = 1, alpha = 0.8)+
   coord_cartesian(ylim = c(0,2), xlim = NULL)+
@@ -394,6 +482,22 @@ final_plot <- ggplot(final_plot_df, aes(x = "Year", y = "Index"/100))+
   
 
 ######################
+
+LPI_trimmed <- cull_fn(LPI_trimmed, 3, 3, c2)
+
+pop_list <- list()
+# select populations to form each group index
+for (i in 1:length(tax_list)) {
+  
+  temp <- LPI_trimmed$PopID[which(LPI_trimmed$SysID==sys_list[i] & 
+                                    LPI_trimmed$GrpID==tax_list[i] & 
+                                    (LPI_trimmed$TRID==realm_list[i] | 
+                                       LPI_trimmed$FWRID==realm_list[i] | 
+                                       LPI_trimmed$MRID==realm_list[i]))]
+  
+  pop_list[[i]] <- temp
+  
+}
 
 T_Afrotropical_Aves <- LPI_trimmed$PopID %in% pop_list[[1]]
 T_Afrotropical_Mammalia <- LPI_trimmed$PopID %in% pop_list[[2]]
@@ -471,6 +575,8 @@ m_PaNoTemp_Aves <- LPI_trimmed$PopID %in% pop_list[[69]]
 m_PaNoTemp_Mammalia <- LPI_trimmed$PopID %in% pop_list[[70]]
 m_PaNoTemp_Herps <- LPI_trimmed$PopID %in% pop_list[[71]]
 m_PaNoTemp_Fish <- LPI_trimmed$PopID %in% pop_list[[72]]
+
+LPI_full <- LPI_full[LPI_full$ID %in% LPI_trimmed$PopID,]
 
 # add X back to years in column names (to make create_infile work properly)
 colnames(LPI_full)[65:134] <- paste("X", colnames(LPI_full)[65:134], sep="") # full
@@ -637,3 +743,27 @@ m_PaNoTemp_Mammalia <- LPIMain("Infiles/m_PaNoTemp_Mammalia_infile.txt", REF_YEA
 m_PaNoTemp_Herps <- LPIMain("Infiles/m_PaNoTemp_Herps_infile.txt", REF_YEAR = 1970, PLOT_MAX = 2018, BOOT_STRAP_SIZE = 100, force_recalculation=1, use_weightings=0, use_weightings_B=0)
 m_PaNoTemp_Fish <- LPIMain("Infiles/m_PaNoTemp_Fish_infile.txt", REF_YEAR = 1970, PLOT_MAX = 2018, BOOT_STRAP_SIZE = 100, force_recalculation=1, use_weightings=0, use_weightings_B=0)
 
+setwd("Infiles/")
+terrestrial_lpi <- LPIMain("terrestrial_infile.txt", REF_YEAR = 1970, PLOT_MAX = 2018, BOOT_STRAP_SIZE = 100, force_recalculation=1, use_weightings=1, use_weightings_B=1)
+freshwater_lpi <- LPIMain("freshwater_infile.txt", REF_YEAR = 1970, PLOT_MAX = 2018, BOOT_STRAP_SIZE = 100, force_recalculation=1, use_weightings=1, use_weightings_B=1)
+marine_lpi <- LPIMain("marine_infile.txt", REF_YEAR = 1970, PLOT_MAX = 2018, BOOT_STRAP_SIZE = 100, force_recalculation=1, use_weightings=1, use_weightings_B=1)
+full_lpi <- LPIMain("lpi_infile2.txt", REF_YEAR = 1970, PLOT_MAX = 2018, BOOT_STRAP_SIZE=100, force_recalculation=1, use_weightings=1, use_weightings_B=1)
+full_lpi_culled <- LPIMain("lpi_infile2.txt", REF_YEAR = 1970, PLOT_MAX = 2018, BOOT_STRAP_SIZE=100, force_recalculation=1, use_weightings=1, use_weightings_B=1)
+
+terrestrial_lpi <- terrestrial_lpi[complete.cases(terrestrial_lpi), ]
+freshwater_lpi <- freshwater_lpi[complete.cases(freshwater_lpi), ]
+marine_lpi <- marine_lpi[complete.cases(marine_lpi), ] 
+full_lpi <- full_lpi[complete.cases(full_lpi), ] 
+full_lpi_culled <- full_lpi_culled[complete.cases(full_lpi_culled), ] 
+
+gg_terr <- ggplot_lpi(terrestrial_lpi, ylim=c(0,2))
+gg_fresh <- ggplot_lpi(freshwater_lpi, ylim=c(0,2))
+gg_marine <- ggplot_lpi(marine_lpi, ylim=c(0,2))
+gg_full <- ggplot_lpi(full_lpi, ylim=c(0,2))
+gg_full_culled <- ggplot_lpi(full_lpi_culled, ylim=c(0,2), title="LPI with Bootstrapped Species Intervals")
+
+saveRDS(gg_full, file="c:/R_projects/LPI_Sampling_Error/files/ggplot_LPI_all2.RData")
+saveRDS(gg_full_culled, file="c:/R_projects/LPI_Sampling_Error/files/ggplot_LPI_all_culled2.RData")
+
+library(ggpubr)
+ggarrange(final_plot, gg_full_culled, ncol=2, nrow=1, common.legend=TRUE, legend="bottom")
