@@ -1,15 +1,9 @@
 # function to perform the methods
-method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnames, n, n_boot, iter_num, samp_size, bootstrap_size, method) {
+method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnames, n, n_boot, iter_num, samp_size, bootstrap_size, boots, method) {
   
-  if (method=="lambda" | method=="lambda2") {
+  if (method=="gamall" | method=="lambda2") {
     
     lambda<-TRUE
-    
-    resample<-FALSE
-    
-  } else if (method=="nores") {
-    
-    lambda<-FALSE
     
     resample<-FALSE
     
@@ -19,13 +13,7 @@ method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnam
     
     resample<-TRUE
     
-  } else if (method=="my") {
-    
-    lambda<-FALSE
-    
-    resample<-TRUE
-    
-  }
+  } 
   
   if (method=="lambda2") {
     
@@ -33,36 +21,17 @@ method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnam
     
   }
   
-  if (method=="nores") {
+  if (method=="gamall" | method=="lr") {
     
-    cat(paste0("Interpolating time series for the ", method, " method.\n"))
-    
-    # log-linear interpolate populations shorter than 6 years
-    # populations 6 years or longer will be interpolated with a GAM in the next step
-    # if method is set to nores, populations will be forecast as well
-    new.grp_data <- complete_time_series(grp_data_culled, c, m_colnames, lambda=FALSE)
-    saveRDS(new.grp_data, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_completed_time_series_", method, ".RData", sep=""))
+    chain<-FALSE
+  }
+  
+  if (method=="gamall") {
     
     cat(paste0("GAMing populations for the ", method, " method.\n"))
     
     # GAM the population indices
-    gam_popmat <- pop_gam_fn(new.grp_data, c, m_colnames, n=n, lambda=FALSE, resample=resample)
-    
-    print(paste("All population GAMs for", method, "method complete."))
-    
-  } else if (method=="lambda") {
-    
-    cat(paste0("Interpolating time series for the ", method, " method.\n"))
-    
-    # log-linear interpolate populations shorter than 6 years
-    # populations 6 years or longer will be interpolated with a GAM in the next step
-    new.grp_data <- complete_time_series(grp_data_culled, c, m_colnames, lambda=TRUE)
-    saveRDS(new.grp_data, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_completed_time_series_", method, ".RData", sep=""))
-    
-    cat(paste0("GAMing populations for the ", method, " method.\n"))
-    
-    # GAM the population indices
-    gam_popmat <- pop_gam_fn(new.grp_data, c, m_colnames, n=n, lambda=TRUE, resample=resample)
+    gam_popmat <- pop_gam_fn(grp_data_culled, c, m_colnames, n=n, lambda=lambda, resample=resample, chain=FALSE)
     
     print(paste("All population GAMs for", method, "method complete."))
     
@@ -83,14 +52,14 @@ method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnam
     cat(paste0("GAMing populations for the ", method, " method.\n"))
     
     # GAM the population indices
-    gam_popmat <- pop_gam_fn(new.grp_data, c, m_colnames, n=n, lambda=TRUE, resample=resample, quality=TRUE)
+    gam_popmat <- pop_gam_fn(new.grp_data, c, m_colnames, n=n, lambda=lambda, resample=resample, quality=TRUE)
     
     print(paste("All population GAMs for", method, "method complete."))
     
     #cat(paste0("GAMing populations that failed quality check for the ", method, " method.\n"))
     
     # log-linear interpolate populations that failed the GAM check
-    gam_popmat <- complete_time_series(gam_popmat, c, m_colnames, lambda=TRUE)
+    gam_popmat <- complete_time_series(gam_popmat, c, m_colnames, lambda=lambda)
     
   } else {
     
@@ -102,7 +71,7 @@ method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnam
     # GAM the population indices
     # model fit checks in LPI have not been implemented as it is not automated
     # brief testing with synthetic data suggested poorly fitting models are rare
-    gam_popmat <- pop_gam_fn(new.grp_data, c, m_colnames, n=n, lambda=lambda, resample=resample)
+    gam_popmat <- pop_gam_fn(new.grp_data, c, m_colnames, n=n, lambda=lambda, resample=resample, chain=FALSE)
     
     print(paste("All population GAMs for", method, "method complete."))
     
@@ -121,12 +90,12 @@ method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnam
   cat(paste0("Creating msi for the ", method, " method.\n"))
   
   # create multi species indices from the group indices
-  msi_full <- group_index_fn(full_spec_index, c, m_colnames, n=n, n_boot=n_boot)
+  msi_full <- group_index_fn2(full_spec_index, c, m_colnames, n=n, n_boot=n_boot)
   saveRDS(msi_full, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_msi_", method, ".RData", sep=""))
   
   print(paste("Final MSI for", method, "method complete."))
   
-  if (method=="lr" | method=="my") {
+  if (method=="lr") {
     
     # create final msi as mean of all msi bootstraps
     msi_final <- colMeans(msi_full, na.rm=TRUE)
@@ -138,7 +107,7 @@ method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnam
     
   }
   
-  if (method=="lr" | method=="my") {
+  if (method=="lr") {
     
     # create final confidence intervals
     msi_ci_full <- ci_resample(msi_full, m_colnames)
@@ -146,18 +115,10 @@ method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnam
     
     print(paste("MSI confidence intervals for", method, "method complete."))
     
-  } else if (method=="lambda" | method=="lambda2") {
+  } else if (method=="gamall" | method=="lambda2") {
     
     # create final confidence intervals
-    msi_ci_full <- ci_fn(full_spec_index, c, m_colnames)
-    saveRDS(msi_ci_full, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_msi_ci_", method, ".RData", sep=""))
-    
-    print(paste("MSI confidence intervals for", method, "method complete."))
-    
-  } else if (method=="nores") {
-    
-    # create confidence intervals for the multi species indices
-    msi_ci_full <- ci_fn(full_spec_index, c, m_colnames)
+    msi_ci_full <- ci_fn(full_spec_index, c, m_colnames, boots=boots)
     saveRDS(msi_ci_full, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_msi_ci_", method, ".RData", sep=""))
     
     print(paste("MSI confidence intervals for", method, "method complete."))
@@ -168,34 +129,24 @@ method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnam
   # create sampled multi species indices from the population indices (species indices created but not saved)
   samp_list <- lapply(sample_pop_id_list, function(i) {
     
-    if (method=="nores") {
-      # interpolate and forecast time series
-      pop_samp <- complete_time_series(grp_data_culled, c, m_colnames, sort(as.numeric(unlist(i))), lambda=FALSE)
+    if (method=="gamall") {
       
-      # GAM all populations
-      gam_samp <- pop_gam_fn(pop_samp, c, m_colnames, n=n, lambda=FALSE, resample=resample)
-      
-    } else if (method=="lambda") {
-      
-      # log-linear interpolate populations with less than 6 data points
-      pop_samp <- complete_time_series(grp_data_culled, c, m_colnames, sort(as.numeric(unlist(i))), lambda=TRUE)
-      
-      # use GAM to interpolate populations with 6 or more data points
-      gam_samp <- pop_gam_fn(pop_samp, c, m_colnames, n=n, lambda=TRUE, resample=resample)
-      
-      # log-linear interpolate populations that failed GAM model quality check
-      #gam_samp <- complete_time_series(gam_samp, c, m_colnames, lambda=TRUE)
+      # copy sample data into pop_samp but do not interpolate or forecast
+      pop_samp <- grp_data_culled[grp_data_culled$PopID %in% sort(as.numeric(unlist(i))),]
+
+      # use GAM to model all populations
+      gam_samp <- pop_gam_fn(pop_samp, c, m_colnames, n=n, lambda=lambda, resample=resample, chain=FALSE)
       
     } else if (method=="lambda2") {
       
       # log-linear interpolate populations with less than 6 data points
-      pop_samp <- complete_time_series(grp_data_culled, c, m_colnames, sort(as.numeric(unlist(i))), lambda=TRUE)
+      pop_samp <- complete_time_series(grp_data_culled, c, m_colnames, sort(as.numeric(unlist(i))), lambda=lambda)
       
       # use GAM to interpolate populations with 6 or more data points
-      gam_samp <- pop_gam_fn(pop_samp, c, m_colnames, n=n, lambda=TRUE, resample=resample, quality=TRUE)
+      gam_samp <- pop_gam_fn(pop_samp, c, m_colnames, n=n, lambda=lambda, resample=resample, quality=TRUE)
       
       # log-linear interpolate populations that failed GAM model quality check
-      gam_samp <- complete_time_series(gam_samp, c, m_colnames, lambda=TRUE)
+      gam_samp <- complete_time_series(gam_samp, c, m_colnames, lambda=lambda)
       
     } else {
       
@@ -203,7 +154,7 @@ method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnam
       pop_samp <- grp_data_culled[grp_data_culled$PopID %in% sort(as.numeric(unlist(i))),]
       
       # use GAM to interpolate all populations, then resample from the GAM. Do not check model quality.
-      gam_samp <- pop_gam_fn(pop_samp, c, m_colnames, n=n, lambda=lambda, resample=resample)
+      gam_samp <- pop_gam_fn(pop_samp, c, m_colnames, n=n, lambda=lambda, resample=resample, chain=FALSE)
       
     }
     
@@ -211,9 +162,9 @@ method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnam
     spec_samp <- species_index_fn(gam_samp, c, n=n, n_boot=n_boot, lambda=lambda, resample=resample)
     
     # create final index
-    msi_samp <- group_index_fn(spec_samp, c, m_colnames, n=n, n_boot=n_boot)
+    msi_samp <- group_index_fn2(spec_samp, c, m_colnames, n=n, n_boot=n_boot)
     
-    if (method=="lr" | method=="my") {
+    if (method=="lr") {
       
       # create final msi as mean of all msi bootstraps
       msi_final_samp <- colMeans(msi_samp, na.rm=TRUE)
@@ -225,20 +176,15 @@ method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnam
       
     }
     
-    if (method=="lr" | method=="my") {
+    if (method=="lr") {
       
       # create msi confidence intervals
       msi_ci <- ci_resample(msi_samp, m_colnames)
       
-    } else if (method=="lambda" | method=="lambda2") {
+    } else if (method=="gamall" | method=="lambda2") {
       
       # create msi confidence intervals
-      msi_ci <- ci_fn(spec_samp, c, m_colnames, savedata=FALSE)
-      
-    } else if (method=="nores") {
-      
-      # create msi confidence intervals
-      msi_ci <- ci_fn(spec_samp, c, m_colnames)
+      msi_ci <- ci_fn(spec_samp, c, m_colnames, boots=boots)
       
     }
     
@@ -263,9 +209,9 @@ method_fn <- function(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnam
   }
   
   # save all the sampled data
-  saveRDS(msi_samp_list, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_msi_sampled_list_", samp_size, "_", method, ".RData", sep=""))
-  saveRDS(msi_ci_list, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_msi_sampled_list_ci_", samp_size, "_", method, ".RData", sep=""))
-  saveRDS(msi_final_samp_list, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_msi_final_sampled_list_", samp_size, "_", method, ".RData", sep=""))
+  saveRDS(msi_samp_list, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_msi_sampled_list_", method, ".RData", sep=""))
+  saveRDS(msi_ci_list, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_msi_sampled_list_ci_", method, ".RData", sep=""))
+  saveRDS(msi_final_samp_list, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_msi_final_sampled_list_", method, ".RData", sep=""))
   
   library(philentropy)
   

@@ -841,6 +841,24 @@ p6 <- ggplot(test_res9[test_res9$ID>10500 & test_res9$ID<10600,], aes(x=factor(M
         legend.title.align = 0.5)
 
 ############
+
+p7 <- ggplot(test_res5[test_res5$ID>10600 & test_res5$ID<10700,], aes(x=factor(MeanCV), y=WithinCI, fill=Method2))+
+  geom_boxplot(show.legend=TRUE, width=0.5)+
+  scale_x_discrete(labels=c("0.05", "0.25", "0.45", "0.65", "0.85"))+
+  ylab("")+
+  xlab("Mean of the CV")+
+  scale_fill_manual(labels=c("Bootstrap Species Indices", "Rank Envelope"), values=c("orange", "sky blue"))+
+  labs(fill = "")+
+  theme_classic()+
+  theme(axis.title.x=element_text(size=14),
+        axis.title.y=element_text(size=14),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.background = element_rect(fill="white"),
+        legend.title.align = 0.5)
+
+############
 library(ggpubr)
 ggarrange(p1, p2, p3, p4, p5, p6, ncol=2, nrow=3, common.legend=TRUE, legend="bottom")
 
@@ -858,7 +876,7 @@ ggsave("bar_plots_withinci.tiff",
 ##########################################
 
 
-p1 <- ggplot(test_res5[test_res5$ID<10100,], aes(x=as.factor(MeanTSLength), y=TrendDev, fill=Method2))+
+p1 <- ggplot(test_res5[test_res5$ID<10100,], aes(x=as.factor(MeanTSLength), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   ylab("")+
   xlab("Mean Time Series Length")+
@@ -875,7 +893,7 @@ p1 <- ggplot(test_res5[test_res5$ID<10100,], aes(x=as.factor(MeanTSLength), y=Tr
 
 ############
 
-p2 <- ggplot(test_res5[test_res5$ID>10116 & test_res5$ID<10200,], aes(x=as.factor(SampSize), y=TrendDev, fill=Method2))+
+p2 <- ggplot(test_res5[test_res5$ID>10116 & test_res5$ID<10200,], aes(x=as.factor(SampSize), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   ylab("")+
   xlab("Sample Size")+
@@ -895,7 +913,7 @@ p2 <- ggplot(test_res5[test_res5$ID>10116 & test_res5$ID<10200,], aes(x=as.facto
 test_res6 <- test_res5 %>%
   mutate(PopSpec = cut(PopSpec, 10))
 
-p3 <- ggplot(test_res6[test_res6$ID>11000,], aes(x=as.factor(PopSpec), y=TrendDev, fill=Method2))+
+p3 <- ggplot(test_res6[test_res6$ID>11000,], aes(x=as.factor(PopSpec), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   ylab("Trend Deviation Value")+
   xlab("Populations Per Species")+
@@ -916,7 +934,7 @@ p3 <- ggplot(test_res6[test_res6$ID>11000,], aes(x=as.factor(PopSpec), y=TrendDe
 test_res7 <- test_res5 %>%
   mutate(MeanGR = cut(MeanGR, 5))
 
-p4 <- ggplot(test_res7[test_res7$ID>10300 & test_res7$ID<10400,], aes(x=factor(MeanGR), y=TrendDev, fill=Method2))+
+p4 <- ggplot(test_res7[test_res7$ID>10300 & test_res7$ID<10400,], aes(x=factor(MeanGR), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("-0.08", "-0.04", "0", "0.04", "0.08"))+
   ylab("")+
@@ -937,7 +955,7 @@ p4 <- ggplot(test_res7[test_res7$ID>10300 & test_res7$ID<10400,], aes(x=factor(M
 test_res8 <- test_res5 %>%
   mutate(SDGR = cut(SDGR, 5))
 
-p5 <- ggplot(test_res8[test_res8$ID>10400 & test_res8$ID<10500,], aes(x=factor(SDGR), y=TrendDev, fill=Method2))+
+p5 <- ggplot(test_res8[test_res8$ID>10400 & test_res8$ID<10500,], aes(x=factor(SDGR), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.05", "0.15", "0.25", "0.35", "0.45"))+
   ylab("")+
@@ -958,7 +976,7 @@ p5 <- ggplot(test_res8[test_res8$ID>10400 & test_res8$ID<10500,], aes(x=factor(S
 test_res9 <- test_res5 %>%
   mutate(MeanSD = cut(MeanSD, 5))
 
-p6 <- ggplot(test_res9[test_res9$ID>10500 & test_res9$ID<10600,], aes(x=factor(MeanSD), y=TrendDev, fill=Method2))+
+p6 <- ggplot(test_res9[test_res9$ID>10500 & test_res9$ID<10600,], aes(x=factor(MeanSD), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.1", "0.3", "0.5", "0.7", "0.9"))+
   ylab("")+
@@ -989,11 +1007,13 @@ ggsave("bar_plots_tdv.tiff",
 
 ############
 
-p7 <- ggplot(test_res5[test_res5$ID>10600,], aes(x=factor(MeanCV), y=PDRatio, fill=Method2))+
+############
+
+p7 <- ggplot(test_res5[test_res5$ID>10600 & test_res5$ID<10700,], aes(x=factor(MeanCV), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
-  scale_x_discrete(labels=c("0.1", "0.3", "0.5", "0.7", "0.9"))+
+  scale_x_discrete(labels=c("0.05", "0.25", "0.45", "0.65", "0.85"))+
   ylab("")+
-  xlab("Mean Coefficient of Variation")+
+  xlab("Mean of the CV")+
   scale_fill_manual(labels=c("Bootstrap Species Indices", "Rank Envelope"), values=c("orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
@@ -1017,7 +1037,7 @@ p7
 ##########################################
 
 
-p1 <- ggplot(test_res5[test_res5$ID<10100,], aes(x=as.factor(MeanTSLength), y=log(CIWidth), fill=Method2))+
+p1 <- ggplot(test_res5[test_res5$ID<10100,], aes(x=as.factor(MeanTSLength), y=log(CIWidth), fill=Method3))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   ylab("")+
   xlab("Mean Time Series Length")+
@@ -1034,7 +1054,7 @@ p1 <- ggplot(test_res5[test_res5$ID<10100,], aes(x=as.factor(MeanTSLength), y=lo
 
 ############
 
-p2 <- ggplot(test_res5[test_res5$ID>10116 & test_res5$ID<10200,], aes(x=as.factor(SampSize), y=log(CIWidth), fill=Method2))+
+p2 <- ggplot(test_res5[test_res5$ID>10116 & test_res5$ID<10200,], aes(x=as.factor(SampSize), y=log(CIWidth), fill=Method3))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   ylab("")+
   xlab("Sample Size")+
@@ -1054,7 +1074,7 @@ p2 <- ggplot(test_res5[test_res5$ID>10116 & test_res5$ID<10200,], aes(x=as.facto
 test_res6 <- test_res5 %>%
   mutate(PopSpec = cut(PopSpec, 10))
 
-p3 <- ggplot(test_res6[test_res6$ID>11000,], aes(x=as.factor(PopSpec), y=log(CIWidth), fill=Method2))+
+p3 <- ggplot(test_res6[test_res6$ID>11000,], aes(x=as.factor(PopSpec), y=log(CIWidth), fill=Method3))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   ylab("natural log of C.I. width")+
   xlab("Populations Per Species")+
@@ -1075,7 +1095,7 @@ p3 <- ggplot(test_res6[test_res6$ID>11000,], aes(x=as.factor(PopSpec), y=log(CIW
 test_res7 <- test_res5 %>%
   mutate(MeanGR = cut(MeanGR, 5))
 
-p4 <- ggplot(test_res7[test_res7$ID>10300 & test_res7$ID<10400,], aes(x=factor(MeanGR), y=log(CIWidth), fill=Method2))+
+p4 <- ggplot(test_res7[test_res7$ID>10300 & test_res7$ID<10400,], aes(x=factor(MeanGR), y=log(CIWidth), fill=Method3))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("-0.08", "-0.04", "0", "0.04", "0.08"))+
   ylab("")+
@@ -1096,7 +1116,7 @@ p4 <- ggplot(test_res7[test_res7$ID>10300 & test_res7$ID<10400,], aes(x=factor(M
 test_res8 <- test_res5 %>%
   mutate(SDGR = cut(SDGR, 5))
 
-p5 <- ggplot(test_res8[test_res8$ID>10400 & test_res8$ID<10500,], aes(x=factor(SDGR), y=log(CIWidth), fill=Method2))+
+p5 <- ggplot(test_res8[test_res8$ID>10400 & test_res8$ID<10500,], aes(x=factor(SDGR), y=log(CIWidth), fill=Method3))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.05", "0.15", "0.25", "0.35", "0.45"))+
   ylab("")+
@@ -1117,7 +1137,7 @@ p5 <- ggplot(test_res8[test_res8$ID>10400 & test_res8$ID<10500,], aes(x=factor(S
 test_res9 <- test_res5 %>%
   mutate(MeanSD = cut(MeanSD, 5))
 
-p6 <- ggplot(test_res9[test_res9$ID>10500 & test_res9$ID<10600,], aes(x=factor(MeanSD), y=log(CIWidth), fill=Method2))+
+p6 <- ggplot(test_res9[test_res9$ID>10500 & test_res9$ID<10600,], aes(x=factor(MeanSD), y=log(CIWidth), fill=Method3))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.1", "0.3", "0.5", "0.7", "0.9"))+
   ylab("")+
@@ -1132,6 +1152,26 @@ p6 <- ggplot(test_res9[test_res9$ID>10500 & test_res9$ID<10600,], aes(x=factor(M
         plot.title = element_text(size = 16, hjust = 0.5),
         panel.background = element_rect(fill="white"),
         legend.title.align = 0.5)
+
+############
+
+p7 <- ggplot(test_res5[test_res5$ID>10600 & test_res5$ID<10700,], aes(x=factor(MeanCV), y=log(CIWidth), fill=Method3))+
+  geom_boxplot(show.legend=TRUE, width=0.5)+
+  scale_x_discrete(labels=c("0.05", "0.25", "0.45", "0.65", "0.85"))+
+  ylab("")+
+  xlab("Mean of the CV")+
+  scale_fill_manual(labels=c("Bootstrap Species Indices", "Rank Envelope"), values=c("orange", "sky blue"))+
+  labs(fill = "")+
+  theme_classic()+
+  theme(axis.title.x=element_text(size=14),
+        axis.title.y=element_text(size=14),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.background = element_rect(fill="white"),
+        legend.title.align = 0.5)
+
+p7
 
 ############
 library(ggpubr)

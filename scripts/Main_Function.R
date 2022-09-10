@@ -9,8 +9,8 @@ all_fn <- function(popvar,
                    tpops, 
                    popspec, 
                    n, 
-                   n_boot, 
-                   ngrps,
+                   n_boot,
+                   boots,
                    count_thres, 
                    min_ts_length, 
                    c, 
@@ -28,6 +28,7 @@ all_fn <- function(popvar,
   source("scripts/SimulateTS_Function.R")
   source("scripts/CI_Functions.R")
   source("scripts/GI_Functions.R")
+  source("scripts/GI_Function2.R")
   source("scripts/SI_Functions.R")
   source("scripts/GAM_Functions.R")
   source("scripts/ChainMethod_Function.R")
@@ -155,7 +156,7 @@ all_fn <- function(popvar,
   cat(paste0("Creating msi for true trend.\n"))
   
   # create multi species indices from the group indices
-  msi_real <- group_index_fn(full_spec_real, c, m_colnames)
+  msi_real <- group_index_fn2(full_spec_real, c, m_colnames)
   saveRDS(msi_real, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_msi_TrueTrend.RData", sep=""))
   
   cat(paste0("Creating msi confidence intervals for true trend.\n"))
@@ -184,16 +185,11 @@ all_fn <- function(popvar,
   dev.off()
   
   
-  #temp <- method_fn(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnames, n=NA, n_boot=NA, iter_num, samp_size, bootstrap_size, method="nores")
+  temp <- method_fn(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnames, n=NA, n_boot=NA, iter_num, samp_size, bootstrap_size, boots, method="gamall")
   
-  #temp <- method_fn(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnames, n=NA, n_boot=NA, iter_num, samp_size, bootstrap_size, method="lambda")
+  temp <- method_fn(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnames, n=NA, n_boot=NA, iter_num, samp_size, bootstrap_size, boots, method="lambda2")
   
-  temp <- method_fn(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnames, n=n, n_boot=n_boot, iter_num, samp_size, bootstrap_size, method="lr")
-  
-  #temp <- method_fn(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnames, n=n, n_boot=n_boot, iter_num, samp_size, bootstrap_size, method="my")
-  
-  temp <- method_fn(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnames, n=NA, n_boot=NA, iter_num, samp_size, bootstrap_size, method="lambda2")
-  
+  temp <- method_fn(grp_data_culled, sample_pop_id_list, msi_real, c, m_colnames, n=n, n_boot=n_boot, iter_num, samp_size, bootstrap_size, boots=NA, method="lr")
   
   ## DATA GATHERING ##
   
@@ -234,6 +230,7 @@ all_fn <- function(popvar,
   gr.stats.samples <- list()
   tslength.samples <- vector()
   numobs.samples <- vector()
+  popspec.samples <- vector()
   for (i in 1:length(sample_pop_id_list)) {
     
     temp <- all_pops_degraded[all_pops_degraded$PopID %in% sample_pop_id_list[[i]],]
@@ -241,6 +238,7 @@ all_fn <- function(popvar,
     gr.stats.samples[[i]] <- growth_rate_calc_fn3(temp2, model=TRUE)
     tslength.samples[i] <- sum(!is.na(as.vector(temp2[,1:50]))) / nrow(temp2)
     numobs.samples[i] <- sum(!is.na(as.vector(temp[,1:50]))) / nrow(temp)
+    popspec.samples[i] <- length(unique(temp2$PopID)) / length(unique(temp2$SpecID))
     
   }
   
@@ -249,6 +247,7 @@ all_fn <- function(popvar,
   info.samples.meansd <- list()
   info.samples.meantslength <- vector()
   info.samples.meannumobs <- vector()
+  info.samples.meanpopspec <- vector()
   for (i in 1:length(sample_pop_id_list)) {
     
     info.samples.meangr[[i]] <- gr.stats.samples[[i]][[1]]
@@ -256,6 +255,7 @@ all_fn <- function(popvar,
     info.samples.meansd[[i]] <- gr.stats.samples[[i]][[3]]
     info.samples.meantslength[i] <- tslength.samples[i]
     info.samples.meannumobs[i] <- numobs.samples[i]
+    info.samples.meanpopspec[i] <- popspec.samples[i]
     
   }
   
@@ -263,7 +263,8 @@ all_fn <- function(popvar,
                              gr_sd_sample = do.call(rbind, info.samples.grsd),
                              mean_sd_sample = do.call(rbind, info.samples.meansd),
                              mean_ts_length = info.samples.meantslength,
-                             mean_num_obs = info.samples.meannumobs)
+                             mean_num_obs = info.samples.meannumobs,
+                             mean_pop_spec = info.samples.meanpopspec)
   write.csv(info.samples, file=paste("TestData/", iter_num, "/saved_synth_", iter_num, "_gr_samples.csv", sep=""))
   
 }

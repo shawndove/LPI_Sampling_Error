@@ -1,6 +1,6 @@
 ## confidence interval functions
 
-ci_fn <- function(index, c, m_colnames, boots=100, n=NA, weights=NA, lambda=FALSE, savedata=FALSE) {
+ci_fn <- function(index, c, m_colnames, boots=100, n=NA, n_boot=NA, weights=NA, lambda=FALSE, savedata=FALSE, resample=FALSE) {
   
   # check whether data is in list format
   if (inherits(index, "list")) {
@@ -77,9 +77,16 @@ ci_fn <- function(index, c, m_colnames, boots=100, n=NA, weights=NA, lambda=FALS
         # if there are observed values
       } else {
         
-        # sample n observed values with replacement
-        temp2 <- sample(temp, replace=TRUE)
-        
+        if (resample==TRUE) {
+          
+          temp2 <- sample(temp, size=length(temp)/n_boot, replace=TRUE)
+          
+        } else {
+          
+          temp2 <- sample(temp, replace=TRUE)
+          
+        }
+
       }
       
       # put the sample into the sample matrix
@@ -97,7 +104,7 @@ ci_fn <- function(index, c, m_colnames, boots=100, n=NA, weights=NA, lambda=FALS
     
     # if there are weights...
     # convert NaN values to NA
-    grp_samp_temp1.4[is.nan(grp_samp_temp1.4)] <- NA
+    grp_samp_temp1.4[is.nan(grp_samp_temp1.4)] <- 0
     
     # if savedata flag is set to TRUE
     if (savedata==TRUE) {

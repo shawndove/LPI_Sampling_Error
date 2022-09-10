@@ -1,4 +1,4 @@
-pop_gam_fn <- function(new.grp_data, c, m_colnames, n=NA, lambda=FALSE, resample=FALSE, forecast=FALSE, quality=FALSE) {
+pop_gam_fn <- function(new.grp_data, c, m_colnames, n=NA, lambda=FALSE, resample=FALSE, forecast=FALSE, quality=FALSE, chain=TRUE) {
   
   # create a list to put resampled populations into
   gam_poplist <- list()
@@ -28,8 +28,8 @@ pop_gam_fn <- function(new.grp_data, c, m_colnames, n=NA, lambda=FALSE, resample
   
   trim.mat[,3] <- as.numeric(as.vector(t(new.grp_data[m_colnames])))  # count
   
-  # if resampling flag is turned off...
-  if (resample==FALSE) {
+  # if resampling flag is turned off and chain flag is turned on...
+  if (resample==FALSE & chain==TRUE) {
     
     # create copied vector to check which populations have already been interpolated
     copied <- new.grp_data$copied
@@ -232,7 +232,7 @@ pop_gam_fn <- function(new.grp_data, c, m_colnames, n=NA, lambda=FALSE, resample
     # convert to matrix
     pred.a <- as.matrix(pred.a)
     
-    # convert back to index values
+    # convert back to abundance values
     pred.a <- exp(pred.a)
     
     # convert any negative values to 0s

@@ -183,6 +183,7 @@ species_index_fn <- function(resamp_popmat, c, n=NA, n_boot=NA, lambda=FALSE, ra
           # remove all change values with log10 values outside of -1:1
           #sample_mat5 <- apply(sample_mat1.7, 2, function(i) {ifelse(i > -1, ifelse(i < 1, i, NA), NA)})
           sample_mat5 <- apply(sample_mat1.7, 2, function(i) {ifelse(i > -1, ifelse(i < 1, i, 1), -1)})
+          #sample_mat5 <- sample_mat1.7
           
         } else {
           
@@ -221,7 +222,7 @@ species_index_fn <- function(resamp_popmat, c, n=NA, n_boot=NA, lambda=FALSE, ra
           
         } else {
           
-          ### bootstrapping the species index, with replacement ###
+          ### bootstrapping the population index variants, with replacement ###
           
           # make a vector of all unique population IDs in the species
           pop_ids <- unique(spec_popdata$PopID)
@@ -278,6 +279,7 @@ species_index_fn <- function(resamp_popmat, c, n=NA, n_boot=NA, lambda=FALSE, ra
           # remove all change values with log10 values outide of -1:1
           #sample_mat1.75 <- apply(sample_mat1.7, 2, function(i) {ifelse(i > -1, ifelse(i < 1, i, NA), NA)})
           sample_mat1.75 <- apply(sample_mat1.7, 2, function(i) {ifelse(i > -1, ifelse(i < 1, i, 1), -1)})
+          #sample_mat1.75 <- sample_mat1.7
           
         } else {
           

@@ -1,23 +1,8 @@
 # function to introduce observation error to time series
-error_intr_fn2 <- function(all_pops_index, m_colnames, mean_cv, cv_sd) {
-  
-  # remove zeros and convert to log
-  #all_pops_index2 <- log(all_pops_index[,1:length(m_colnames)] + 0.0000001)
+error_intr_fn2 <- function(all_pops_index, m_colnames, mean_cv, cv_sd, complete=TRUE, LPIMode=FALSE) {
   
   # create matrix to hold new index values
   all_pops_error <- matrix(data = NA, nrow = nrow(all_pops_index), ncol= length(m_colnames))
-  
-  # find the difference between the mean and minimum
-  #mean_min_diff <- mean_cv - min_cv
-  
-  # find the difference between the maximum and the mean
-  #mean_max_diff <- max_cv - mean_cv
-  
-  # the standard deviation for the cv distribution is calculated as one third of
-  # the difference between the max and mean or mean and min, whichever is smaller
-  # because a normal distribution of 1000 values should give max and min values 
-  # of roughly 3x the standard deviation (this is subject to chance)
-  #cv_sd <- min(c(mean_min_diff, mean_max_diff)) / 3
   
   # generate distribution of cv values
   cv_dist <- rnorm(1000, mean = mean_cv, sd = cv_sd)
@@ -34,11 +19,18 @@ error_intr_fn2 <- function(all_pops_index, m_colnames, mean_cv, cv_sd) {
     # loop through observations
     for (j in 1:(length(m_colnames))) {
       
+      if (is.na(all_pops_index[i,j])) {
+        all_pops_error[i,j] <- NA
+        next
+      } else if (all_pops_index[i,j]==0) {
+        all_pops_error[i,j] <- 0
+        next
+      }
       # create a normal distribution of index values with actual index value as mean and std_val as st. dev.
       # note that this uses the absolute value of the normal distribution to avoid negative values
       distribution <- rnorm(1000, mean = all_pops_index[i,j], sd = all_pops_index[i,j] * row_cv[i])
       
-      distribution_nz <- distribution[distribution > 0] # remove zeros
+      distribution_nz <- distribution[distribution > 0] # remove zeros and negative values
       
       new_ival <- sample(distribution_nz, 1) # sample from distribution to get new index value with error
       
@@ -53,8 +45,11 @@ error_intr_fn2 <- function(all_pops_index, m_colnames, mean_cv, cv_sd) {
   # back convert from log
   #all_pops_error <- exp(all_pops_error)
   
+  if (complete==TRUE) {
   # adjust all indices to begin at a base value of 100
   all_pops_error <- all_pops_error / all_pops_error[,1] * 100
+  
+  }
   
   all_pops_error <- as.data.frame(all_pops_error) # convert to data frame
   
@@ -65,6 +60,10 @@ error_intr_fn2 <- function(all_pops_index, m_colnames, mean_cv, cv_sd) {
   all_pops_error$PopID <- all_pops_index$PopID # get population ID values from original data frame
   
   all_pops_error$GrpID <- all_pops_index$GrpID # get group ID values from original data frame
+  
+  if (LPIMode==TRUE) {
+    all_pops_error[,(length(m_colnames)+3):length(all_pops_index)] <- all_pops_index[,(length(m_colnames)+3):length(all_pops_index)] 
+  }
   
   return(all_pops_error)
 }

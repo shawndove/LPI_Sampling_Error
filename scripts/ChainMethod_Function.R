@@ -208,7 +208,7 @@ complete_time_series <- function(grp_data_culled, c, m_colnames, sample_pop_ids=
     
     # back convert from log
     pop_interp <- exp(pop_interp_temp$y)
-    
+ 
     # create a counter for use when adding the interpolated values into the time series
     counter2 <- 1
     
