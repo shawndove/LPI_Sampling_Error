@@ -360,7 +360,7 @@ foreach(i = 1:96) %dopar% {  # loop for parallel processing
 stopCluster(cl) # stop the cluster
 
 #7#
-iter_num <- 20600
+iter_num <- 20800
 gr_mean_a <- 0
 gr_sd_vec_a <- 0.2
 sd_mean <- 0.2
@@ -371,8 +371,8 @@ popspec <- 20
 
 #mean_cv_ <- rep(0.05, each=8)
 #cv_sd <- rep(0.05, each=8)
-mean_cv_ <- rep(c(0.05, 0.25, 0.45, 0.65, 0.85, 1, 2, 4), each=12)
-cv_sd <- rep(c(0.05, 0.25, 0.45, 0.65, 0.85, 1, 2, 4), each=12)
+mean_cv_ <- rep(c(0.05, 0.25, 0.45, 0.65, 0.85, 1, 2, 4), each=20)
+cv_sd <- rep(c(0.05, 0.25, 0.45, 0.65, 0.85, 1, 2, 4), each=20)
 
 no_cores <- 8 # the number of cores to be used for parallel processing
 cl <- makeCluster(no_cores, outfile="TestData/output.txt") # create cluster for parallel processing
@@ -390,7 +390,7 @@ clusterEvalQ(cl, c(library(tcltk),  # send necessary functions to the cluster
 source("scripts/Main_Function.R")
 
 # call the main function
-foreach(i = 1:96) %dopar% {  # loop for parallel processing
+foreach(i = 1:160) %dopar% {  # loop for parallel processing
   all_fn(popvar = gr_sd_vec_a, # variance in mean growth rate
          popmean = gr_mean_a, # mean growth rate
          sdmean =  sd_mean, # mean of standard deviations in growth rates

@@ -8,7 +8,7 @@ dir_names <- list.dirs(path="TestData",
 # remove unwanted directories
 dir_names <- dir_names[-length(dir_names)]
 dir_names <- paste(dir_names, "/", sep="")
-dir_names <- dir_names[1255:1350]
+dir_names <- dir_names[1351:1510]
 
 source("scripts/FinalTP_WithinCI_Function.R")
 
