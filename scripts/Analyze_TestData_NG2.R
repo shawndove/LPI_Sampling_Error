@@ -15,8 +15,9 @@ dir_names <- list.dirs(path="TestData",
 # remove unwanted directories
 dir_names <- dir_names[-length(dir_names)]
 dir_names <- paste(dir_names, "/", sep="")
-dir_names <- dir_names[593:1062]
-dir_names <- dir_names[1255:1350]
+dir_names <- dir_names[1351:1510]
+#dir_names <- dir_names[593:1062]
+#dir_names <- dir_names[1255:1350]
 
 # reset previously used vectors to empty
 info_list <- vector()
@@ -1437,7 +1438,7 @@ ggsave("bar_plots_withinciftp.tiff",
        compression = "lzw")
 
 
-################# Mean Time Series Length
+################# Sampled Mean Time Series Length
 
 test_res5.1 <- test_res5 %>%
   mutate(MeanTSSamp = cut(MeanTSSamp, breaks=c(5.0, 7.0, 10, 15, 20, 25, 33, 42)))
@@ -1465,6 +1466,7 @@ ptsa <- ggplot(test_res5.1[test_res5.1$ID<20100,], aes(x=MeanTSSamp, y=WithinCI,
 ptsb <- ggplot(test_res5.1[test_res5.1$ID<20100,], aes(x=as.factor(MeanTSSamp), y=CIWidth, fill=Method3))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("7", "10", "15", "20", "25", "33", "42"))+
+  scale_y_continuous(limits=c(0,5))+
   ylab("Mean Normalized C.I. Width")+
   xlab("Mean Time Series Length")+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
@@ -1484,6 +1486,7 @@ ptsb <- ggplot(test_res5.1[test_res5.1$ID<20100,], aes(x=as.factor(MeanTSSamp), 
 ptsc <- ggplot(test_res5.1[test_res5.1$ID<20100,], aes(x=as.factor(MeanTSSamp), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("7", "10", "15", "20", "25", "33", "42"))+
+  scale_y_continuous(limits=c(0,1))+
   ylab("Mean TDV")+
   xlab("Mean Time Series Length")+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
@@ -1555,6 +1558,7 @@ pssa <- ggplot(test_res5[test_res5$ID>20100 & test_res5$ID<20200,], aes(x=as.fac
 pssb <- ggplot(test_res5[test_res5$ID>20100 & test_res5$ID<20200,], aes(x=as.factor(SampSize), y=CIWidth, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("50", "70", "100", "150", "200", "300", "500", "800"))+
+  scale_y_continuous(limits=c(0,5))+
   ylab("Mean Normalized C.I. Width")+
   xlab("Sample Size")+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
@@ -1574,6 +1578,7 @@ pssb <- ggplot(test_res5[test_res5$ID>20100 & test_res5$ID<20200,], aes(x=as.fac
 pssc <- ggplot(test_res5[test_res5$ID>20100 & test_res5$ID<20200,], aes(x=as.factor(SampSize), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("50", "70", "100", "150", "200", "300", "500", "800"))+
+  scale_y_continuous(limits=c(0,1))+
   ylab("Mean TDV")+
   xlab("Sample Size")+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
@@ -1620,7 +1625,7 @@ ggsave("bar_plots_sampsize2.tiff",
        units = "px",
        compression = "lzw")
 
-############ Mean Number of Populations Per Species
+############ Sampled Mean Number of Populations Per Species
 
 test_res5.2 <- test_res5
 test_res5.2$SampPopSpec <- test_res5.2$SampSize / test_res5.2$SampSpecSize
@@ -1633,7 +1638,7 @@ ppsa <- ggplot(test_res6[test_res6$ID>20200 & test_res6$ID<20300,], aes(x=as.fac
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("1.6", "2.3", "3.2", "4.1", "6", "10", "20", "40"))+
   ylab("Mean % Capture of 'True' Trend")+
-  xlab("Mean PPS")+
+  xlab(expression(paste("Mean PPS"[italic(samp)])))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
@@ -1651,8 +1656,9 @@ ppsa <- ggplot(test_res6[test_res6$ID>20200 & test_res6$ID<20300,], aes(x=as.fac
 ppsb <- ggplot(test_res6[test_res6$ID>20200 & test_res6$ID<20300,], aes(x=as.factor(SampPopSpec), y=CIWidth, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("1.6", "2.3", "3.2", "4.1", "6", "10", "20", "40"))+
+  scale_y_continuous(limits=c(0,5))+
   ylab("Mean Normalized C.I. Width")+
-  xlab("Mean PPS")+
+  xlab(expression(paste("Mean PPS"[italic(samp)])))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
@@ -1670,8 +1676,9 @@ ppsb <- ggplot(test_res6[test_res6$ID>20200 & test_res6$ID<20300,], aes(x=as.fac
 ppsc <- ggplot(test_res6[test_res6$ID>20200 & test_res6$ID<20300,], aes(x=as.factor(SampPopSpec), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("1.6", "2.3", "3.2", "4.1", "6", "10", "20", "40"))+
+  scale_y_continuous(limits=c(0,1))+
   ylab("Mean TDV")+
-  xlab("Mean PPS")+
+  xlab(expression(paste("Mean PPS"[italic(samp)])))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
@@ -1690,7 +1697,7 @@ ppsd <- ggplot(test_res6[test_res6$ID>20200 & test_res6$ID<20300,], aes(x=as.fac
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("1.6", "2.3", "3.2", "4.1", "6", "10", "20", "40"))+
   ylab("Proportion Final Time \nPoints Captured")+
-  xlab("Mean PPS")+
+  xlab(expression(paste("Mean PPS"[italic(samp)])))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
@@ -1716,7 +1723,7 @@ ggsave("bar_plots_popspec2.tiff",
        units = "px",
        compression = "lzw")
 
-############ Mean of Population Mean Growth Rates
+############ Sampled Mean of Population Mean Growth Rates
 
 test_res7 <- test_res5[test_res5$ID>20300 & test_res5$ID<20400,] %>%
   mutate(MeanGRSamp = cut(MeanGRSamp, breaks=c(-0.15, -0.08, -0.03, 0, 0.03, 0.08, 0.15)))
@@ -1726,11 +1733,11 @@ pgra <- ggplot(test_res7[test_res7$ID>20300 & test_res7$ID<20400,], aes(x=as.fac
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("-0.1", "-0.05", "-0.01", "0.01", "0.05", "0.1"))+
   ylab("Mean % Capture of 'True' Trend")+
-  xlab(expression(italic('μ'[ds])))+
+  xlab(expression(paste(italic('μ'[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -1744,12 +1751,13 @@ pgra <- ggplot(test_res7[test_res7$ID>20300 & test_res7$ID<20400,], aes(x=as.fac
 pgrb <- ggplot(test_res7[test_res7$ID>20300 & test_res7$ID<20400,], aes(x=as.factor(MeanGRSamp), y=CIWidth, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("-0.1", "-0.05", "-0.01", "0.01", "0.05", "0.1"))+
+  scale_y_continuous(limits=c(0,5))+
   ylab("Mean Normalized C.I. Width")+
-  xlab(expression(italic('μ'[ds])))+
+  xlab(expression(paste(italic('μ'[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -1763,12 +1771,13 @@ pgrb <- ggplot(test_res7[test_res7$ID>20300 & test_res7$ID<20400,], aes(x=as.fac
 pgrc <- ggplot(test_res7[test_res7$ID>20300 & test_res7$ID<20400,], aes(x=as.factor(MeanGRSamp), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("-0.1", "-0.05", "-0.01", "0.01", "0.05", "0.1"))+
+  scale_y_continuous(limits=c(0,1))+
   ylab("Mean TDV")+
-  xlab(expression(italic('μ'[ds])))+
+  xlab(expression(paste(italic('μ'[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -1783,11 +1792,11 @@ pgrd <- ggplot(test_res7[test_res7$ID>20300 & test_res7$ID<20400,], aes(x=as.fac
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("-0.1", "-0.05", "-0.01", "0.01", "0.05", "0.1"))+
   ylab("Proportion Final Time \nPoints Captured")+
-  xlab(expression(italic('μ'[ds])))+
+  xlab(expression(paste(italic('μ'[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -1809,7 +1818,7 @@ ggsave("bar_plots_growthrate2.tiff",
        units = "px",
        compression = "lzw")
 
-############ Standard Deviation of Population Growth Rates
+############ Sampled Standard Deviation of Population Growth Rates
 
 test_res8 <- test_res5 %>%
   mutate(SDGRSamp = cut(SDGRSamp, breaks=c(0, 0.12, 0.24, 0.4, 0.6, 0.8, 1.0, 1.6)))
@@ -1819,11 +1828,11 @@ psda <- ggplot(test_res8[test_res8$ID>20400 & test_res8$ID<20500,], aes(x=as.fac
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.1", "0.2", "0.3", "0.5", "0.7", "0.9", "1.1"))+
   ylab("Mean % Capture of 'True' Trend")+
-  xlab(expression(paste(italic(sigma[ds]))))+
+  xlab(expression(paste(italic(sigma[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -1837,12 +1846,13 @@ psda <- ggplot(test_res8[test_res8$ID>20400 & test_res8$ID<20500,], aes(x=as.fac
 psdb <- ggplot(test_res8[test_res8$ID>20400 & test_res8$ID<20500,], aes(x=as.factor(SDGRSamp), y=CIWidth, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.1", "0.2", "0.3", "0.5", "0.7", "0.9", "1.1"))+
+  scale_y_continuous(limits=c(0,25))+
   ylab("Mean Normalized C.I. Width")+
-  xlab(expression(paste(italic(sigma[ds]))))+
+  xlab(expression(paste(italic(sigma[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -1856,12 +1866,13 @@ psdb <- ggplot(test_res8[test_res8$ID>20400 & test_res8$ID<20500,], aes(x=as.fac
 psdc <- ggplot(test_res8[test_res8$ID>20400 & test_res8$ID<20500,], aes(x=as.factor(SDGRSamp), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.1", "0.2", "0.3", "0.5", "0.7", "0.9", "1.1"))+
+  scale_y_continuous(limits=c(0,1))+
   ylab("Mean TDV")+
-  xlab(expression(paste(italic(sigma[ds]))))+
+  xlab(expression(paste(italic(sigma[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -1876,11 +1887,11 @@ psdd <- ggplot(test_res8[test_res8$ID>20400 & test_res8$ID<20500,], aes(x=as.fac
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.1", "0.2", "0.3", "0.5", "0.7", "0.9", "1.1"))+
   ylab("Proportion Final Time \nPoints Captured")+
-  xlab(expression(paste(italic(sigma[ds]))))+
+  xlab(expression(paste(italic(sigma[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -1902,7 +1913,7 @@ ggsave("bar_plots_stdevpop2.tiff",
        units = "px",
        compression = "lzw")
 
-############ Mean of Population Standard Deviations
+############ Sampled Mean of Population Standard Deviations
 
 test_res9 <- test_res5 %>%
   mutate(MeanSDSamp = cut(MeanSDSamp, breaks=c(0.3, 0.35, 0.39, 0.43, 0.5, 0.55, 0.62, 0.67, 0.72)))
@@ -1912,11 +1923,11 @@ pmsa <- ggplot(test_res9[test_res9$ID>20500 & test_res9$ID<20600,], aes(x=as.fac
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.32", "0.37", "0.41", "0.47", "0.52", "0.6", "0.65", "0.7"))+
   ylab("Mean % Capture of 'True' Trend")+
-  xlab(expression(italic("\u03BC"[sigma[ds]])))+
+  xlab(expression(paste(italic(eta*epsilon))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -1930,12 +1941,13 @@ pmsa <- ggplot(test_res9[test_res9$ID>20500 & test_res9$ID<20600,], aes(x=as.fac
 pmsb <- ggplot(test_res9[test_res9$ID>20500 & test_res9$ID<20600,], aes(x=as.factor(MeanSDSamp), y=CIWidth, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.32", "0.37", "0.41", "0.47", "0.52", "0.6", "0.65", "0.7"))+
+  scale_y_continuous(limits=c(0,10))+
   ylab("Mean Normalized C.I. Width")+
-  xlab(expression(italic("\u03BC"[sigma[ds]])))+
+  xlab(expression(paste(italic(eta*epsilon))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -1949,12 +1961,13 @@ pmsb <- ggplot(test_res9[test_res9$ID>20500 & test_res9$ID<20600,], aes(x=as.fac
 pmsc <- ggplot(test_res9[test_res9$ID>20500 & test_res9$ID<20600,], aes(x=as.factor(MeanSDSamp), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.32", "0.37", "0.41", "0.47", "0.52", "0.6", "0.65", "0.7"))+
+  scale_y_continuous(limits=c(0,1))+
   ylab("Mean TDV")+
-  xlab(expression(italic("\u03BC"[sigma[ds]])))+
+  xlab(expression(paste(italic(eta*epsilon))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -1969,11 +1982,11 @@ pmsd <- ggplot(test_res9[test_res9$ID>20500 & test_res9$ID<20600,], aes(x=as.fac
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.32", "0.37", "0.41", "0.47", "0.52", "0.6", "0.65", "0.7"))+
   ylab("Proportion Final Time \nPoints Captured")+
-  xlab(expression(italic("\u03BC"[sigma[ds]])))+
+  xlab(expression(paste(italic(eta*epsilon))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -1999,7 +2012,8 @@ ggsave("bar_plots_meanstdev2.tiff",
 
 #test_res5 <- readRDS(file="obserror_testdata.RData")
 
-poea <- ggplot(test_res5[test_res5$ID>20600 & test_res5$ID<20700,], aes(x=factor(MeanCV), y=WithinCI, fill=Method2))+
+# Capture percentage
+poea <- ggplot(test_res5[test_res5$ID>20800 & test_res5$ID<21000,], aes(x=factor(MeanCV), y=WithinCI, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("5%", "25%", "45%", "65%", "85%", "100%", "200%", "400%"))+
   ylab("Mean % Capture of 'True' Trend")+
@@ -2017,10 +2031,11 @@ poea <- ggplot(test_res5[test_res5$ID>20600 & test_res5$ID<20700,], aes(x=factor
         legend.text = element_text(size = 14),
         legend.key.size = unit(1, 'cm'))
 
-poeb <- ggplot(test_res5[test_res5$ID>20600 & test_res5$ID<20700,], aes(x=factor(MeanCV), y=CIWidth, fill=Method3))+
+# CI Width
+poeb <- ggplot(test_res5[test_res5$ID>20800 & test_res5$ID<21000,], aes(x=factor(MeanCV), y=CIWidth, fill=Method3))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("5%", "25%", "45%", "65%", "85%", "100%", "200%", "400%"))+
-  #scale_y_continuous(limits=c(0,500))+
+  scale_y_continuous(limits=c(0,5))+
   ylab("Mean Normalized C.I. Width")+
   xlab("Mean Observation Error")+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
@@ -2036,9 +2051,11 @@ poeb <- ggplot(test_res5[test_res5$ID>20600 & test_res5$ID<20700,], aes(x=factor
         legend.text = element_text(size = 14),
         legend.key.size = unit(1, 'cm'))
 
-poec <- ggplot(test_res5[test_res5$ID>20600 & test_res5$ID<20700,], aes(x=factor(MeanCV), y=TrendDev, fill=Method))+
+# TDV
+poec <- ggplot(test_res5[test_res5$ID>20800 & test_res5$ID<21000,], aes(x=factor(MeanCV), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("5%", "25%", "45%", "65%", "85%", "100%", "200%", "400%"))+
+  scale_y_continuous(limits=c(0,1))+
   ylab("Mean TDV")+
   xlab("Mean Observation Error")+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
@@ -2054,7 +2071,8 @@ poec <- ggplot(test_res5[test_res5$ID>20600 & test_res5$ID<20700,], aes(x=factor
         legend.text = element_text(size = 14),
         legend.key.size = unit(1, 'cm'))
 
-poed <- ggplot(test_res5[test_res5$ID>20600 & test_res5$ID<20700,], aes(x=factor(MeanCV), y=1-WithinCIFTP, fill=Method))+
+# Proportion of final time points captured
+poed <- ggplot(test_res5[test_res5$ID>20800 & test_res5$ID<21000,], aes(x=factor(MeanCV), y=1-WithinCIFTP, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("5%", "25%", "45%", "65%", "85%", "100%", "200%", "400%"))+
   ylab("Proportion Final Time \nPoints Captured")+
@@ -2072,17 +2090,18 @@ poed <- ggplot(test_res5[test_res5$ID>20600 & test_res5$ID<20700,], aes(x=factor
         legend.text = element_text(size = 14),
         legend.key.size = unit(1, 'cm'))
 
-poee <- ggplot(test_res5[test_res5$ID>20600 & test_res5$ID<20700,], aes(x=factor(MeanCV), y=SDGRSamp, fill=Method3))+
-  geom_boxplot(show.legend=TRUE, width=0.5)+
+# Sampled variation in population growth rates
+poee <- ggplot(test_res5[test_res5$ID>20800 & test_res5$ID<21000 & test_res5$Method=="TrendDevLambda",], aes(x=factor(MeanCV), y=SDGRSamp))+
+  geom_boxplot(show.legend=TRUE, width=0.5, fill="skyblue")+
   scale_x_discrete(labels=c("5%", "25%", "45%", "65%", "85%", "100%", "200%", "400%"))+
   scale_y_continuous(limits=c(0,0.8))+
-  ylab(expression(paste("Sampled "~italic(sigma[ds]))))+
+  ylab(expression(paste(~italic(sigma[samp]))))+
   xlab("Mean Observation Error")+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
   theme(axis.title.x=element_text(size=16),
-        axis.title.y=element_text(size=16),
+        axis.title.y=element_text(size=20),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
         plot.title = element_text(size = 16, hjust = 0.5),
@@ -2091,17 +2110,18 @@ poee <- ggplot(test_res5[test_res5$ID>20600 & test_res5$ID<20700,], aes(x=factor
         legend.text = element_text(size = 14),
         legend.key.size = unit(1, 'cm'))
 
-poef <- ggplot(test_res5[test_res5$ID>20600 & test_res5$ID<20700,], aes(x=factor(MeanCV), y=MeanSDSamp, fill=Method3))+
-  geom_boxplot(show.legend=TRUE, width=0.5)+
+# Sampled mean of population standard deviations in the growth rate
+poef <- ggplot(test_res5[test_res5$ID>20800 & test_res5$ID<21000 & test_res5$Method=="TrendDevLambda",], aes(x=factor(MeanCV), y=MeanSDSamp))+
+  geom_boxplot(show.legend=TRUE, width=0.5, fill="skyblue")+
   scale_x_discrete(labels=c("5%", "25%", "45%", "65%", "85%", "100%", "200%", "400%"))+
   scale_y_continuous(limits=c(0,0.8))+
-  ylab(expression(italic("\u03BC"[sigma[ds]])))+
+  ylab(expression(paste(italic(eta*epsilon))))+
   xlab("Mean Observation Error")+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
   theme(axis.title.x=element_text(size=16),
-        axis.title.y=element_text(size=16),
+        axis.title.y=element_text(size=20),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
         plot.title = element_text(size = 16, hjust = 0.5),
@@ -2140,7 +2160,7 @@ ggsave("bar_plots_obserr_variance2.tiff",
        units = "px",
        compression = "lzw")
 
-############ Process Error
+############ Process Error (Unsampled Mean of Population Standard Deviations)
 
 test_res10 <- test_res5 %>%
   mutate(MeanSDSamp = cut(MeanSDSamp, breaks=c(0.05, 0.12, 0.16, 0.23, 0.3, 0.4, 0.47, 0.55, 0.65)))
@@ -2150,11 +2170,11 @@ ppea <- ggplot(test_res10[test_res10$ID>20700 & test_res10$ID<20800,], aes(x=as.
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.07", "0.14", "0.2", "0.27", "0.35", "0.43", "0.5", "0.6"))+
   ylab("Mean % Capture of 'True' Trend")+
-  xlab(expression(italic("\u03BC"[sigma[ds]])))+
+  xlab(expression(paste(italic(eta[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -2168,12 +2188,13 @@ ppea <- ggplot(test_res10[test_res10$ID>20700 & test_res10$ID<20800,], aes(x=as.
 ppeb <- ggplot(test_res10[test_res10$ID>20700 & test_res10$ID<20800,], aes(x=as.factor(MeanSDSamp), y=CIWidth, fill=Method2))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.07", "0.14", "0.2", "0.27", "0.35", "0.43", "0.5", "0.6"))+
+  scale_y_continuous(limits=c(0,10))+
   ylab("Mean Normalized C.I. Width")+
-  xlab(expression(italic("\u03BC"[sigma[ds]])))+
+  xlab(expression(paste(italic(eta[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -2187,12 +2208,13 @@ ppeb <- ggplot(test_res10[test_res10$ID>20700 & test_res10$ID<20800,], aes(x=as.
 ppec <- ggplot(test_res10[test_res10$ID>20700 & test_res10$ID<20800,], aes(x=as.factor(MeanSDSamp), y=TrendDev, fill=Method))+
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.07", "0.14", "0.2", "0.27", "0.35", "0.43", "0.5", "0.6"))+
+  scale_y_continuous(limits=c(0,1))+
   ylab("Mean TDV")+
-  xlab(expression(italic("\u03BC"[sigma[ds]])))+
+  xlab(expression(paste(italic(eta[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -2207,11 +2229,11 @@ pped <- ggplot(test_res10[test_res10$ID>20700 & test_res10$ID<20800,], aes(x=as.
   geom_boxplot(show.legend=TRUE, width=0.5)+
   scale_x_discrete(labels=c("0.07", "0.14", "0.2", "0.27", "0.35", "0.43", "0.5", "0.6"))+
   ylab("Proportion Final Time \nPoints Captured")+
-  xlab(expression(italic("\u03BC"[sigma[ds]])))+
+  xlab(expression(paste(italic(eta[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
         axis.title.y=element_text(size=16),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
@@ -2221,17 +2243,18 @@ pped <- ggplot(test_res10[test_res10$ID>20700 & test_res10$ID<20800,], aes(x=as.
         legend.text = element_text(size = 14),
         legend.key.size = unit(1, 'cm'))
 
-ppee <- ggplot(test_res10[test_res10$ID>20700 & test_res10$ID<20800,], aes(x=factor(MeanSDSamp), y=SDGRSamp, fill=Method3))+
-  geom_boxplot(show.legend=TRUE, width=0.5)+
+# Sampled standard deviation in growth rates
+ppee <- ggplot(test_res10[test_res10$ID>20700 & test_res10$ID<20800 & test_res10$Method3=="CIWidthLambda",], aes(x=factor(MeanSDSamp), y=SDGRSamp))+
+  geom_boxplot(show.legend=TRUE, width=0.5, fill="skyblue")+
   scale_x_discrete(labels=c("0.07", "0.14", "0.2", "0.27", "0.35", "0.43", "0.5", "0.6"))+
-  scale_y_continuous(limits=c(0,0.5))+
-  ylab(expression(paste("Sampled "~italic(sigma[ds]))))+
-  xlab(expression(italic("\u03BC"[sigma[ds]])))+
+  scale_y_continuous(limits=c(0,0.8))+
+  ylab(expression(paste(~italic(sigma[samp]))))+
+  xlab(expression(paste(italic(eta[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
-        axis.title.y=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
+        axis.title.y=element_text(size=20),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
         plot.title = element_text(size = 16, hjust = 0.5),
@@ -2240,17 +2263,18 @@ ppee <- ggplot(test_res10[test_res10$ID>20700 & test_res10$ID<20800,], aes(x=fac
         legend.text = element_text(size = 14),
         legend.key.size = unit(1, 'cm'))
 
-ppef <- ggplot(test_res10[test_res10$ID>20700 & test_res10$ID<20800,], aes(x=factor(MeanSDSamp), y=SDGR, fill=Method3))+
-  geom_boxplot(show.legend=TRUE, width=0.5)+
+# Unsampled standard deviation in growth rates
+ppef <- ggplot(test_res10[test_res10$ID>20700 & test_res10$ID<20800 & test_res10$Method3=="CIWidthLambda",], aes(x=factor(MeanSDSamp), y=SDGR))+
+  geom_boxplot(show.legend=TRUE, width=0.5, fill="skyblue")+
   scale_x_discrete(labels=c("0.07", "0.14", "0.2", "0.27", "0.35", "0.43", "0.5", "0.6"))+
-  scale_y_continuous(limits=c(0,0.5))+
-  ylab(expression(paste("Unsampled "~italic(sigma[ds]))))+
-  xlab(expression(italic("\u03BC"[sigma[ds]])))+
+  scale_y_continuous(limits=c(0,0.8))+
+  ylab(expression(paste(~italic(sigma[ds]))))+
+  xlab(expression(paste(italic(eta[samp]))))+
   scale_fill_manual(labels=c("GAM Only (GO)", "GAM + Chain (GC)", "GAM-Resampled Rank Envelope (GRRE)"), values=c("springgreen3", "orange", "sky blue"))+
   labs(fill = "")+
   theme_classic()+
-  theme(axis.title.x=element_text(size=16),
-        axis.title.y=element_text(size=16),
+  theme(axis.title.x=element_text(size=20),
+        axis.title.y=element_text(size=20),
         axis.text.x = element_text(size = 14),
         axis.text.y = element_text(size = 14),
         plot.title = element_text(size = 16, hjust = 0.5),
@@ -2272,18 +2296,18 @@ ggsave("bar_plots_procerr2.tiff",
        units = "px",
        compression = "lzw")
 
-ggarrange(ppee, ppef, poee, ncol=2, nrow=2, common.legend=TRUE, legend="bottom", align="hv",
+ggarrange(ppee, ppef, poee, poef, ncol=2, nrow=2, common.legend=TRUE, legend="bottom", align="hv",
           labels="AUTO", 
-          label.x=0.12, 
+          label.x=0.15, 
           label.y=0.95,
           font.label=list(size=20, face="bold"))
 
-ggsave("bar_plots_sdgr_error.tiff",
+ggsave("bar_plots_sdgr_error2.tiff",
        plot = last_plot(),
        device = tiff,
        dpi = 1000,
-       height = 8000,
-       width = 12000,
+       height = 7500,
+       width = 10000,
        units = "px",
        compression = "lzw")
 
@@ -2294,15 +2318,15 @@ pcplot <- ggarrange(ptsa + rremove("ylab"),
                     ppsa + rremove("ylab"), 
                     pgra + rremove("ylab") + rremove("y.text"), 
                     psda + rremove("ylab"), 
-                    pmsa + rremove("ylab") + rremove("y.text"), 
-                    poea + rremove("ylab"), 
+                    poea + rremove("ylab") + rremove("y.text"),
+                    pmsa + rremove("ylab"),
                     ppea + rremove("ylab") + rremove("y.text"), 
                     ncol=2, nrow=4, 
                     common.legend=TRUE, legend="bottom",
                     labels="AUTO", 
-                    label.x=0.07, 
-                    label.y=0.97,
-                    font.label=list(size=26, face="bold"),
+                    label.x=0.09, 
+                    label.y=0.98,
+                    font.label=list(size=22, face="bold"),
                     align="hv")
 
 annotate_figure(pcplot,
@@ -2310,12 +2334,12 @@ annotate_figure(pcplot,
                                 rot = 90, vjust = 1,
                                 gp = gpar(cex = 1.3)))
 
-ggsave("bar_plots_percentcapture.tiff",
+ggsave("bar_plots_percentcapture3.tiff",
        plot = last_plot(),
        device = tiff,
        dpi = 1000,
-       height = 16000,
-       width = 12000,
+       height = 13300,
+       width = 10000,
        units = "px",
        compression = "lzw")
 
@@ -2325,46 +2349,49 @@ ciplot <- ggarrange(ptsb + rremove("ylab"),
                     ppsb + rremove("ylab"), 
                     pgrb + rremove("ylab"), 
                     psdb + rremove("ylab"), 
-                    pmsb + rremove("ylab"), 
                     poeb + rremove("ylab"), 
+                    pmsb + rremove("ylab"), 
                     ppeb + rremove("ylab"), 
                     ncol=2, nrow=4, 
                     common.legend=TRUE, legend="bottom",
                     labels="AUTO", 
-                    label.x=0.07, 
-                    label.y=0.97,
-                    font.label=list(size=26, face="bold"),
+                    label.x=0.10, 
+                    label.y=0.98,
+                    font.label=list(size=22, face="bold"),
                     align="hv")
 
 annotate_figure(ciplot,
                 left = textGrob("Mean Normalized C.I. Width",
                                 rot = 90, vjust = 1,
-                                gp = gpar(cex = 1.3)))
+                                gp = gpar(cex = 1.3)),
+                bottom = textGrob("*Note that y-axis scale differs between panels",
+                                  rot = 0, vjust = 0.5, hjust = 0.9,
+                                  gp = gpar(cex = 1.3)))
 
-ggsave("bar_plots_ciwidth.tiff",
+ggsave("bar_plots_ciwidth3.tiff",
        plot = last_plot(),
        device = tiff,
        dpi = 1000,
-       height = 16000,
-       width = 12000,
+       height = 13300,
+       width = 10000,
        units = "px",
        compression = "lzw")
 
 # Plot Mean TDV
 tdvplot <- ggarrange(ptsc + rremove("ylab"), 
-                     pssc + rremove("ylab"), 
+                     pssc + rremove("ylab") + rremove("y.text"), 
                      ppsc + rremove("ylab"), 
-                     pgrc + rremove("ylab"), 
+                     pgrc + rremove("ylab") + rremove("y.text"), 
                      psdc + rremove("ylab"), 
+                     poec + rremove("ylab") + rremove("y.text"), 
                      pmsc + rremove("ylab"), 
-                     poec + rremove("ylab"), 
-                     ppec + rremove("ylab"), 
+                     ppec + rremove("ylab") + rremove("y.text"), 
                      ncol=2, nrow=4, 
                      common.legend=TRUE, legend="bottom",
                      labels="AUTO", 
-                     label.x=0.08, 
-                     label.y=0.97,
-                     font.label=list(size=26, face="bold"),
+                     label.x=0.10, 
+                     label.y=0.98,
+                     font.label=list(size=22, face="bold"),
                      align="hv")
 
 annotate_figure(tdvplot,
@@ -2372,11 +2399,11 @@ annotate_figure(tdvplot,
                                 rot = 90, vjust = 1,
                                 gp = gpar(cex = 1.3)))
 
-ggsave("bar_plots_tdv.tiff",
+ggsave("bar_plots_tdv3.tiff",
        plot = last_plot(),
        device = tiff,
        dpi = 1000,
-       height = 16000,
-       width = 12000,
+       height = 13300,
+       width = 10000,
        units = "px",
        compression = "lzw")

@@ -202,6 +202,30 @@ for (i in 1:length(tax_list)) {
   
 }
 
+spec_list <- list()
+# select populations to form each group index
+for (i in 1:length(tax_list)) {
+  
+  temp <- LPI_trimmed$SpecID[which(LPI_trimmed$SysID==sys_list[i] & 
+                                    LPI_trimmed$GrpID==tax_list[i] & 
+                                    (LPI_trimmed$TRID==realm_list[i] | 
+                                       LPI_trimmed$FWRID==realm_list[i] | 
+                                       LPI_trimmed$MRID==realm_list[i]))]
+  
+  spec_list[[i]] <- temp
+  
+}
+
+popspec_list <- list()
+for (i in 1:length(tax_list)) {
+  
+  a <- length(unique(pop_list[[i]]))
+  b <- length(unique(spec_list[[i]]))
+  c <- a/b
+  popspec_list[[i]] <- c
+  
+}
+
 # calculate regional taxonomic group indices and CIs for LPI using rank envelope method
 spec.ind.list <- list()
 grp.ind.list <- list()
@@ -1281,103 +1305,638 @@ saveRDS(grp.indl.list_truega, file="files/grp_indl_list_truega.RData")
 saveRDS(grp.ind.mean.list_truega, file="files/grp_ind_mean_list_truega.RData")
 saveRDS(grp.ci.list_truega, file="files/grp_ci_list_truega.RData")
 
+grp.ind.mean.list_true <- readRDS(file="files/grp_ind_mean_list_true.RData")
+grp.ci.list_true <- readRDS(file="files/grp_ci_list_true.RData")
+
+grp.ind.mean.list_truere <- readRDS(file="files/grp_ind_mean_list_truere.RData")
+grp.ci.list_truere <- readRDS(file="files/grp_ci_list_truere.RData")
+
+grp.ind.mean.list_truega <- readRDS(file="files/grp_ind_mean_list_truega.RData")
+grp.ci.list_truega <- readRDS(file="files/grp_ci_list_truega.RData")
+
 ##
-Ter_Palearctic_Aves_plot_lpi <- data.frame(Index = as.vector(grp.ind.mean.list_true[[29]]), 
+fw_IndoPacific_Aves_plot_lpi <- data.frame(Index = as.vector(grp.ind.mean.list_true[[29]]), 
                                           CILow = as.vector(as.matrix(grp.ci.list_true[[29]][1,])), 
                                           CIHigh = as.vector(as.matrix(grp.ci.list_true[[29]][2,])),
                                           Year = as.vector(as.numeric(m_colnames)))
 
 ## plot index in ggplot
-Ter_Palearctic_Aves_lpi <- ggplot(Ter_Palearctic_Aves_plot_lpi, aes(x = Year, y = Index/100, group = 1))+
-  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100, group = 1), alpha = 0.8, fill = "darkblue")+
-  #geom_line(aes(y=CIHigh/100), col="blue")+
-  #geom_line(aes(y=CILow/100), col="blue")+
-  geom_line(size = 0.6, col = "white")+
+fw_IndoPacific_Aves_lpi <- ggplot(fw_IndoPacific_Aves_plot_lpi, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
   geom_hline(yintercept = 1, alpha = 0.8)+
   coord_cartesian(ylim = c(0,2), xlim = c(1970,2020))+
   theme_bw()+
-  theme(text = element_text(size = 16),
-        axis.text.x = element_text(size = 12, angle = 90, hjust = 1),
-        axis.text.y = element_blank(),
-        axis.title.y = element_blank())+
-  ggtitle("Species resample, GAM + chain")+
-  ylab("")+
-  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.2))+
-  scale_x_continuous(breaks = seq(1970, 2020, 5))
-
-#saveRDS(fwPAplotlambda, file="files/fwPAplotlambda.RData")
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 20),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        plot.margin = unit(c(0, -1, -5, 0), "cm"))+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.4))+
+  scale_x_continuous(breaks = seq(1970, 2020, 10))
 
 ##
-Ter_Palearctic_Aves_plot_re <- data.frame(Index = as.vector(grp.ind.mean.list_truere[[29]]), 
+fw_IndoPacific_Aves_plot_re <- data.frame(Index = as.vector(grp.ind.mean.list_truere[[29]]), 
                                               CILow = as.vector(as.matrix(grp.ci.list_truere[[29]][1,])), 
                                               CIHigh = as.vector(as.matrix(grp.ci.list_truere[[29]][2,])),
                                               Year = as.vector(as.numeric(m_colnames)))
 
-#Ter_PA_re_permutations <- grp.ind.list_truere[[29]]
-#Ter_PA_re_permutations$ID <- seq(1, 10000)
-#Ter_PA_re_permutations2 <- melt(Ter_PA_re_permutations, id.vars=c("ID"))
-#Ter_PA_re_permutations2$variable <- as.numeric(levels(Ter_PA_re_permutations2$variable))[Ter_PA_re_permutations2$variable]
-
 ## plot index in ggplot
-Ter_Palearctic_Aves_re <- 
-  ggplot(Ter_Palearctic_Aves_plot_re, aes(x = Year, y = Index/100, group = 1))+
-  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100, group = 1), alpha = 0.8, fill = "darkblue")+
-  #geom_line(aes(y=CIHigh/100), col="blue")+
-  #geom_line(aes(y=CILow/100), col="blue")+
-  #geom_line(data=Ter_PA_re_permutations2, aes(x=variable, y=value/100, group=ID), alpha = 0.2, col="black")+
-  #geom_line(size = 0.6, col = "black")+
-  geom_line(size = 0.6, col = "white")+
+fw_IndoPacific_Aves_re <- 
+  ggplot(fw_IndoPacific_Aves_plot_re, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
   geom_hline(yintercept = 1, alpha = 0.8)+
   coord_cartesian(ylim = c(0,2), xlim = c(1970,2020))+
   theme_bw()+
-  theme(text = element_text(size = 16),
-        axis.text.x = element_text(size = 12, angle = 90, hjust = 1))+
-  ggtitle("Rank envelope method")+
-  ylab("Index (1970 = 1)")+
-  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.2))+
-  scale_x_continuous(breaks = seq(1970, 2020, 5))
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        plot.margin = unit(c(0, -1, -5, 0), "cm"))+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.4))+
+  scale_x_continuous(breaks = seq(1970, 2020, 10))
 
 ##
-Ter_Palearctic_Aves_plot_ga <- data.frame(Index = as.vector(grp.ind.mean.list_truega[[29]]), 
+fw_IndoPacific_Aves_plot_ga <- data.frame(Index = as.vector(grp.ind.mean.list_truega[[29]]), 
                                            CILow = as.vector(as.matrix(grp.ci.list_truega[[29]][1,])), 
                                            CIHigh = as.vector(as.matrix(grp.ci.list_truega[[29]][2,])),
                                            Year = as.vector(as.numeric(m_colnames)))
 
 ## plot index in ggplot
-Ter_Palearctic_Aves_ga <- ggplot(Ter_Palearctic_Aves_plot_ga, aes(x = Year, y = Index/100, group = 1))+
-  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100, group = 1), alpha = 0.8, fill = "darkblue")+
-  #geom_line(aes(y=CIHigh/100), col="blue")+
-  #geom_line(aes(y=CILow/100), col="blue")+
-  geom_line(size = 0.6, col = "white")+
+fw_IndoPacific_Aves_ga <- ggplot(fw_IndoPacific_Aves_plot_ga, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
   geom_hline(yintercept = 1, alpha = 0.8)+
   coord_cartesian(ylim = c(0,2), xlim = c(1970,2020))+
   theme_bw()+
-  theme(text = element_text(size = 16),
-        axis.text.x = element_text(size = 12, angle = 90, hjust = 1),
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        axis.title.y = element_blank())+
-  ggtitle("Species resample, GAM only")+
-  ylab("")+
-  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.2))+
-  scale_x_continuous(breaks = seq(1970, 2020, 5))
+        plot.margin = unit(c(0, -1, -5, 0), "cm"))+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.4))+
+  scale_x_continuous(breaks = seq(1970, 2020, 10))
+
+##
+Ter_Neotropical_Mammals_plot_lpi <- data.frame(Index = as.vector(grp.ind.mean.list_true[[18]]), 
+                                           CILow = as.vector(as.matrix(grp.ci.list_true[[18]][1,])), 
+                                           CIHigh = as.vector(as.matrix(grp.ci.list_true[[18]][2,])),
+                                           Year = as.vector(as.numeric(m_colnames)))
+
+## plot index in ggplot
+Ter_Neotropical_Mammals_lpi <- ggplot(Ter_Neotropical_Mammals_plot_lpi, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
+  geom_hline(yintercept = 1, alpha = 0.8)+
+  coord_cartesian(ylim = c(0,2), xlim = c(1970,2020))+
+  theme_bw()+
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 20),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        plot.title = element_text(size = 24),
+        plot.margin = unit(c(0, -1, -5, 0), "cm"))+
+  ggtitle("GC")+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.4))+
+  scale_x_continuous(breaks = seq(1970, 2020, 10))
+
+##
+Ter_Neotropical_Mammals_plot_re <- data.frame(Index = as.vector(grp.ind.mean.list_truere[[18]]), 
+                                          CILow = as.vector(as.matrix(grp.ci.list_truere[[18]][1,])), 
+                                          CIHigh = as.vector(as.matrix(grp.ci.list_truere[[18]][2,])),
+                                          Year = as.vector(as.numeric(m_colnames)))
+
+## plot index in ggplot
+Ter_Neotropical_Mammals_re <- 
+  ggplot(Ter_Neotropical_Mammals_plot_re, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
+  geom_hline(yintercept = 1, alpha = 0.8)+
+  coord_cartesian(ylim = c(0,2), xlim = c(1970,2020))+
+  theme_bw()+
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        plot.title = element_text(size = 24),
+        plot.margin = unit(c(0, -1, -5, 0), "cm"))+
+  ggtitle("GRRE")+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.4))+
+  scale_x_continuous(breaks = seq(1970, 2020, 10))
+
+##
+Ter_Neotropical_Mammals_plot_ga <- data.frame(Index = as.vector(grp.ind.mean.list_truega[[18]]), 
+                                          CILow = as.vector(as.matrix(grp.ci.list_truega[[18]][1,])), 
+                                          CIHigh = as.vector(as.matrix(grp.ci.list_truega[[18]][2,])),
+                                          Year = as.vector(as.numeric(m_colnames)))
+
+## plot index in ggplot
+Ter_Neotropical_Mammals_ga <- ggplot(Ter_Neotropical_Mammals_plot_ga, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
+  geom_hline(yintercept = 1, alpha = 0.8)+
+  coord_cartesian(ylim = c(0,2), xlim = c(1970,2020))+
+  theme_bw()+
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        plot.title = element_text(size = 24),
+        plot.margin = unit(c(0, -1, -5, 0), "cm"))+
+  ggtitle("GO")+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.4))+
+  scale_x_continuous(breaks = seq(1970, 2020, 10))
+
+
+##
+fw_Afrotropical_Herps_plot_lpi <- data.frame(Index = as.vector(grp.ind.mean.list_true[[27]]), 
+                                               CILow = as.vector(as.matrix(grp.ci.list_true[[27]][1,])), 
+                                               CIHigh = as.vector(as.matrix(grp.ci.list_true[[27]][2,])),
+                                               Year = as.vector(as.numeric(m_colnames)))
+
+## plot index in ggplot
+fw_Afrotropical_Herps_lpi <- ggplot(fw_Afrotropical_Herps_plot_lpi, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
+  geom_hline(yintercept = 1, alpha = 0.8)+
+  coord_cartesian(ylim = c(0,2), xlim = c(1970,2020))+
+  theme_bw()+
+  theme(axis.text.y = element_text(size = 20),
+        axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        plot.margin = unit(c(0, -1, -5, 0), "cm"))+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.4))+
+  scale_x_continuous(breaks = seq(1970, 2020, 10))
+
+##
+fw_Afrotropical_Herps_plot_re <- data.frame(Index = as.vector(grp.ind.mean.list_truere[[27]]), 
+                                              CILow = as.vector(as.matrix(grp.ci.list_truere[[27]][1,])), 
+                                              CIHigh = as.vector(as.matrix(grp.ci.list_truere[[27]][2,])),
+                                              Year = as.vector(as.numeric(m_colnames)))
+
+## plot index in ggplot
+fw_Afrotropical_Herps_re <- 
+  ggplot(fw_Afrotropical_Herps_plot_re, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
+  geom_hline(yintercept = 1, alpha = 0.8)+
+  coord_cartesian(ylim = c(0,2), xlim = c(1970,2020))+
+  theme_bw()+
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        plot.margin = unit(c(0, -1, -5, 0), "cm"))+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.4))+
+  scale_x_continuous(breaks = seq(1970, 2020, 10))
+
+##
+fw_Afrotropical_Herps_plot_ga <- data.frame(Index = as.vector(grp.ind.mean.list_truega[[27]]), 
+                                              CILow = as.vector(as.matrix(grp.ci.list_truega[[27]][1,])), 
+                                              CIHigh = as.vector(as.matrix(grp.ci.list_truega[[27]][2,])),
+                                              Year = as.vector(as.numeric(m_colnames)))
+
+## plot index in ggplot
+fw_Afrotropical_Herps_ga <- ggplot(fw_Afrotropical_Herps_plot_ga, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
+  geom_hline(yintercept = 1, alpha = 0.8)+
+  coord_cartesian(ylim = c(0,2), xlim = c(1970,2020))+
+  theme_bw()+
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        plot.margin = unit(c(0, -1, -5, 0), "cm"))+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.4))+
+  scale_x_continuous(breaks = seq(1970, 2020, 10))
+
+##
+m_PaNoTemp_Fish_plot_lpi <- data.frame(Index = as.vector(grp.ind.mean.list_true[[72]]), 
+                                               CILow = as.vector(as.matrix(grp.ci.list_true[[72]][1,])), 
+                                               CIHigh = as.vector(as.matrix(grp.ci.list_true[[72]][2,])),
+                                               Year = as.vector(as.numeric(m_colnames)))
+
+## plot index in ggplot
+m_PaNoTemp_Fish_lpi <- ggplot(m_PaNoTemp_Fish_plot_lpi, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
+  geom_hline(yintercept = 1, alpha = 0.8)+
+  coord_cartesian(ylim = c(0,2), xlim = c(1970,2020))+
+  theme_bw()+
+  theme(axis.text.y = element_text(size = 20),
+        axis.text.x = element_text(size = 16, angle = 45, hjust = 1, vjust = 1),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        plot.margin = unit(c(0, -1, -5, 0), "cm"))+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.4))+
+  scale_x_continuous(breaks = seq(1970, 2020, 10))
+
+##
+m_PaNoTemp_Fish_plot_re <- data.frame(Index = as.vector(grp.ind.mean.list_truere[[72]]), 
+                                              CILow = as.vector(as.matrix(grp.ci.list_truere[[72]][1,])), 
+                                              CIHigh = as.vector(as.matrix(grp.ci.list_truere[[72]][2,])),
+                                              Year = as.vector(as.numeric(m_colnames)))
+
+## plot index in ggplot
+m_PaNoTemp_Fish_re <- 
+  ggplot(m_PaNoTemp_Fish_plot_re, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
+  geom_hline(yintercept = 1, alpha = 0.8)+
+  coord_cartesian(ylim = c(0,2), xlim = c(1970,2020))+
+  theme_bw()+
+  theme(axis.text.x = element_text(size = 16, angle = 45, hjust = 1, vjust = 1),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title.x = element_blank(),
+        plot.margin = unit(c(0, -1, -5, 0), "cm"))+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.4))+
+  scale_x_continuous(breaks = seq(1970, 2020, 10))
+
+##
+m_PaNoTemp_Fish_plot_ga <- data.frame(Index = as.vector(grp.ind.mean.list_truega[[72]]), 
+                                              CILow = as.vector(as.matrix(grp.ci.list_truega[[72]][1,])), 
+                                              CIHigh = as.vector(as.matrix(grp.ci.list_truega[[72]][2,])),
+                                              Year = as.vector(as.numeric(m_colnames)))
+
+## plot index in ggplot
+m_PaNoTemp_Fish_ga <- ggplot(m_PaNoTemp_Fish_plot_ga, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
+  geom_hline(yintercept = 1, alpha = 0.8)+
+  coord_cartesian(ylim = c(0,2), xlim = c(1970,2020))+
+  theme_bw()+
+  theme(axis.text.x = element_text(size = 16, angle = 45, hjust = 1, vjust = 1),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title.x = element_blank(),
+        plot.margin = unit(c(0, -1, -5, 0), "cm"))+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2, 0.4))+
+  scale_x_continuous(breaks = seq(1970, 2020, 10))
+
+
 
 library(ggpubr)
-ggarrange(Ter_Palearctic_Aves_re, 
-          Ter_Palearctic_Aves_lpi,
-          Ter_Palearctic_Aves_ga,
-          ncol=3, nrow=1, common.legend=TRUE, legend="bottom")
+trends <- ggarrange(Ter_Neotropical_Mammals_lpi,
+          Ter_Neotropical_Mammals_ga,
+          Ter_Neotropical_Mammals_re,
+          fw_Afrotropical_Herps_lpi,
+          fw_Afrotropical_Herps_ga,
+          fw_Afrotropical_Herps_re,
+          fw_IndoPacific_Aves_lpi,
+          fw_IndoPacific_Aves_ga,
+          fw_IndoPacific_Aves_re,
+          m_PaNoTemp_Fish_lpi,
+          m_PaNoTemp_Fish_ga,
+          m_PaNoTemp_Fish_re,
+          ncol=3, nrow=4, 
+          common.legend=FALSE,
+          labels="AUTO", 
+          label.x=0.07, 
+          label.y=0.97,
+          font.label=list(size=24, face="bold"),
+          align="hv")
 
-ggsave(filename = "ci_comparison_lpi.tiff",
+annotate_figure(trends,
+                left = textGrob("Index",
+                                rot = 90, vjust = 0.5,
+                                gp = gpar(cex = 2)),
+                bottom = textGrob("Year",
+                                  hjust = 0.5,
+                                  gp = gpar(cex = 2)))
+
+ggsave(filename = "ci_comparison_lpi2.tiff",
        plot = last_plot(),
        device = "tiff",
        width = 12000,
-       height = 4000,
+       height = 16000,
        units = "px",
        dpi = 1000,
        compression = "lzw")
 
+##### faceted plot
+
+for (i in 1:(3*length(grp.ind.mean.list_truega))) {
+  
+  if (i <= length(grp.ind.mean.list_truega)) {
+    
+    if (is.na(grp.ind.mean.list_truega[[i]][1])) {
+      
+      next
+      
+    }
+    
+    temp_df <- data.frame(Index = as.vector(grp.ind.mean.list_true[[i]]), 
+                          CILow = as.vector(as.matrix(grp.ci.list_true[[i]][1,])), 
+                          CIHigh = as.vector(as.matrix(grp.ci.list_true[[i]][2,])),
+                          Year = as.vector(as.numeric(m_colnames)),
+                          Trend = as.vector(rep(i, length(m_colnames))),
+                          Method = as.vector(rep("GC", length(m_colnames))))
+    
+  } else if (i > length(grp.ind.mean.list_truega) & i <= (2*length(grp.ind.mean.list_truega))) {
+    
+    j = i-length(grp.ind.mean.list_truega)
+    
+    if (is.na(grp.ind.mean.list_truega[[j]][1])) {
+      
+      next
+      
+    }
+    
+    temp_df <- data.frame(Index = as.vector(grp.ind.mean.list_truega[[j]]), 
+                          CILow = as.vector(as.matrix(grp.ci.list_truega[[j]][1,])), 
+                          CIHigh = as.vector(as.matrix(grp.ci.list_truega[[j]][2,])),
+                          Year = as.vector(as.numeric(m_colnames)),
+                          Trend = as.vector(rep(j, length(m_colnames))),
+                          Method = as.vector(rep("GO", length(m_colnames))))
+    
+  } else if (i > (2*length(grp.ind.mean.list_truega)) & i <= (3*length(grp.ind.mean.list_truega))) {
+    
+    k = i-(2*length(grp.ind.mean.list_truega))
+    
+    if (is.na(grp.ind.mean.list_truega[[k]][1])) {
+      
+      next
+      
+    }
+    
+    temp_df <- data.frame(Index = as.vector(grp.ind.mean.list_truere[[k]]), 
+                          CILow = as.vector(as.matrix(grp.ci.list_truere[[k]][1,])), 
+                          CIHigh = as.vector(as.matrix(grp.ci.list_truere[[k]][2,])),
+                          Year = as.vector(as.numeric(m_colnames)),
+                          Trend = as.vector(rep(k, length(m_colnames))),
+                          Method = as.vector(rep("GRRE", length(m_colnames))))
+  }
+  
+  
+  if (i==1) {
+    
+    full_df <- temp_df
+  
+  } else {
+   
+    full_df <- rbind(full_df, temp_df) 
+    
+  }
+
+}
+
+plot1data <- full_df[full_df$Trend==61 | 
+                       full_df$Trend==27 |
+                       full_df$Trend==18 |
+                       full_df$Trend==29,]
+
+trend.labs.plot1 <- c("Terrestrial \n Neotropical Mammals", 
+                      "Freshwater \n Afrotropical Herps",
+                      "Freshwater \n IndoPacific Birds",
+                      "Marine South \n Temperate Birds")
+
+names(trend.labs.plot1) = c("18", "27", "29", "61")
+
+
+# ggplot(plot1data, aes(x = Year, y = Index/100))+
+#   geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+#   geom_line(size = 0.6, col = "lightblue")+
+#   geom_hline(yintercept = 1, alpha = 0.8)+
+#   coord_cartesian(ylim = c(0,2), xlim = c(1970,2022))+
+#   theme_bw()+
+#   theme(axis.text.x = element_text(size = 20, angle = 90, hjust = 0.5, vjust = 0.5),
+#         axis.title.y = element_blank(),
+#         axis.text.y = element_text(size = 20),
+#         axis.title.x = element_blank(),
+#         strip.text.x = element_text(size = 24, face = "bold"),
+#         strip.text.y = element_text(size = 18, face = "bold"))+
+#   scale_y_continuous(trans = "identity", breaks = seq(0, 2.2, 0.2))+
+#   scale_x_continuous(breaks = seq(1970, 2020, 5))+
+#   facet_grid(Trend~Method, 
+#              scales = "free_y", 
+#              labeller = labeller(Trend = trend.labs.plot1))
+# 
+# ggsave(filename = "ci_comparison_lpi2.tiff",
+#        plot = last_plot(),
+#        device = "tiff",
+#        width = 12000,
+#        height = 16000,
+#        units = "px",
+#        dpi = 1000,
+#        compression = "lzw")
+
+ggplot(plot1data, aes(x = Year, y = Index/100))+
+  geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+  geom_line(size = 0.6, col = "lightblue")+
+  geom_hline(yintercept = 1, alpha = 0.5)+
+  coord_cartesian(ylim = c(0,2), xlim = c(1970,2022))+
+  ylab("Index")+
+  theme_bw()+
+  theme(axis.text.x = element_text(size = 10, angle = 90, hjust = 0.5, vjust = 0.5),
+        axis.title.y = element_text(size = 12),
+        axis.text.y = element_text(size = 10),
+        axis.title.x = element_blank(),
+        strip.text.x = element_text(size = 12, face = "bold"),
+        strip.text.y = element_text(size = 9, face = "bold"))+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2.2, 0.2))+
+  scale_x_continuous(breaks = seq(1970, 2020, 5))+
+  facet_grid(Trend~Method, 
+             scales = "free_y", 
+             labeller = labeller(Trend = trend.labs.plot1))
+
+ggsave(filename = "ci_comparison_lpi3.tiff",
+       plot = last_plot(),
+       device = "tiff",
+       width = 6000,
+       height = 8000,
+       units = "px",
+       dpi = 1000,
+       compression = "lzw")
+
+
+#### function to plot LPI trends ###
+
+plot_trends <- function(trend_list, names_list, plot_num) {
+  
+  trend_list <- unlist(trend_list)
+  names_list <- unlist(names_list)
+  names_list <- names_list[!is.na(trend_list)]
+  trend_list <- trend_list[!is.na(trend_list)]
+  
+  if (length(trend_list)==0) {return()}
+  
+  plot_data <- full_df[full_df$Trend %in% trend_list,]
+  
+  trend.labs.plot <- c(names_list)
+  
+  names(trend.labs.plot) = c(trend_list)
+  
+  ggplot(plot_data, aes(x = Year))+
+    geom_ribbon(aes(ymin = CILow/100, ymax = CIHigh/100), alpha = 0.8, fill = "darkblue")+
+    geom_path(aes(y = Index/100), size = 0.5, col = "lightblue")+
+    geom_hline(yintercept = 1, alpha = 0.5)+
+    #coord_cartesian(ylim = c(0,max(plot_data$CIHigh)/100), xlim = c(1970,2022))+
+    expand_limits(y=0)+
+    expand_limits(y=2)+
+    ylab("Index")+
+    theme_bw()+
+    theme(axis.text.x = element_text(size = 10, angle = 90, hjust = 0.5, vjust = 0.5),
+          axis.title.y = element_text(size = 12),
+          axis.text.y = element_text(size = 10),
+          axis.title.x = element_blank(),
+          strip.text.x = element_text(size = 12, face = "bold"),
+          strip.text.y = element_text(size = 9, face = "bold"))+
+    scale_y_continuous(trans = "identity")+
+    scale_x_continuous(breaks = seq(1970, 2020, 5))+
+    facet_grid(Trend~Method, 
+               scales = "free_y", 
+               labeller = labeller(Trend = trend.labs.plot))
+  
+  if (length(trend_list)==4) {
+    
+    ggsave(filename = paste("LPI_trends_supp_", plot_num, ".tiff", sep=""),
+           plot = last_plot(),
+           device = "tiff",
+           width = 6000,
+           height = 8000,
+           units = "px",
+           dpi = 1000,
+           compression = "lzw")
+    
+  } else {
+    
+    ggsave(filename = paste("LPI_trends_supp_", plot_num, ".tiff", sep=""),
+           plot = last_plot(),
+           device = "tiff",
+           width = 6000,
+           height = 6000,
+           units = "px",
+           dpi = 1000,
+           compression = "lzw")
+    
+  }
+
+  
+}
+
+trend_list <- as.list(c(1:3,
+                        NA,
+                      5:7,
+                      NA,
+                      9:11,
+                      NA,
+                      13:15,
+                      NA,
+                      17:19,
+                      NA,
+                      NA,
+                      NA,
+                      NA,
+                      NA,
+                      25:44,
+                      NA,
+                      NA,
+                      NA,
+                      NA,
+                      49:58,
+                      NA,
+                      60:62,
+                      NA,
+                      64:70,
+                      NA,
+                      72))
+
+count_list <- as.list(1:56)
+
+names_list <- as.list(c("Terrestrial \n Afrotropical Birds",
+                        "Terrestrial \n Afrotropical Mammals",
+                        "Terrestrial \n Afrotropical Herps",
+                        "NA",
+                        "Terrestrial \n IndoPacific Birds",
+                        "Terrestrial \n IndoPacific Mammals",
+                        "Terrestrial \n IndoPacific Herps",
+                        "NA",
+                        "Terrestrial \n Palearctic Birds",
+                        "Terrestrial \n Palearctic Mammals",
+                        "Terrestrial \n Palearctic Herps",
+                        "NA",
+                        "Terrestrial \n Neotropical Birds",
+                        "Terrestrial \n Neotropical Mammals",
+                        "Terrestrial \n Neotropical Herps",
+                        "NA",
+                        "Terrestrial \n Nearctic Birds",
+                        "Terrestrial \n Nearctic Mammals",
+                        "Terrestrial \n Nearctic Herps",
+                        "NA",
+                        "NA",
+                        "NA",
+                        "NA",
+                        "NA",
+                        "Freshwater \n Afrotropical Birds",
+                        "Freshwater \n Afrotropical Mammals",
+                        "Freshwater \n Afrotropical Herps",
+                        "Freshwater \n Afrotropical Fish",
+                        "Freshwater \n IndoPacific Birds",
+                        "Freshwater \n IndoPacific Mammals",
+                        "Freshwater \n IndoPacific Herps",
+                        "Freshwater \n IndoPacific Fish",
+                        "Freshwater \n Palearctic Birds",
+                        "Freshwater \n Palearctic Mammals",
+                        "Freshwater \n Palearctic Herps",
+                        "Freshwater \n Palearctic Fish",
+                        "Freshwater \n Neotropical Birds",
+                        "Freshwater \n Neotropical Mammals",
+                        "Freshwater \n Neotropical Herps",
+                        "Freshwater \n Neotropical Fish",
+                        "Freshwater \n Nearctic Birds",
+                        "Freshwater \n Nearctic Mammals",
+                        "Freshwater \n Nearctic Herps",
+                        "Freshwater \n Nearctic Fish",
+                        "NA",
+                        "NA",
+                        "NA",
+                        "NA",
+                        "Marine Temperate \n Atlantic Birds",
+                        "Marine Temperate \n Atlantic Mammals",
+                        "Marine Temperate \n Atlantic Herps",
+                        "Marine Temperate \n Atlantic Fish",
+                        "Marine Tropical \n Atlantic Birds",
+                        "Marine Tropical \n Atlantic Mammals",
+                        "Marine Tropical \n Atlantic Herps",
+                        "Marine Tropical \n Atlantic Fish",
+                        "Marine \n Arctic Birds",
+                        "Marine \n Arctic Mammals",
+                        "NA",
+                        "Marine \n Arctic Fish",
+                        "Marine South \n Temperate Birds",
+                        "Marine South \n Temperate Mammals",
+                        "NA",
+                        "Marine South \n Temperate Fish",
+                        "Marine \n IndoPacific Birds",
+                        "Marine \n IndoPacific Mammals",
+                        "Marine \n IndoPacific Herps",
+                        "Marine \n IndoPacific Fish",
+                        "Marine Pacific \n Temperate Birds",
+                        "Marine Pacific \n Temperate Mammals",
+                        "NA",
+                        "Marine Pacific \n Temperate Fish"))
+
+for (i in 1:18) {
+  
+  temp_trend_list <- trend_list[((4*i)-3):(4*i)]
+  
+  temp_names_list <- names_list[((4*i)-3):(4*i)]
+
+  plot_num <- i
+  
+  plot_trends(temp_trend_list, temp_names_list, plot_num)
+
+}
+
+#####
+
 Ter_Palearctic_Aves_samp_re <- list()
 Ter_Palearctic_Aves_samp_lambda <- list()
+Ter_Palerarctic_Aves_samp_ga <- list()
 for (i in 1:20){
   Ter_Palearctic_Aves_samp_re[[i]] <- data.frame(Index = as.vector(grp.ind.mean.list_re[[i]]), 
                                                  CILow = as.vector(as.matrix(grp.ci.list_re[[i]][1,])), 
