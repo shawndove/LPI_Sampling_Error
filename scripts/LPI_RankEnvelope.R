@@ -219,10 +219,10 @@ for (i in 1:length(tax_list)) {
 popspec_list <- list()
 for (i in 1:length(tax_list)) {
   
-  a <- length(unique(pop_list[[i]]))
-  b <- length(unique(spec_list[[i]]))
-  c <- a/b
-  popspec_list[[i]] <- c
+  lengtha <- length(unique(pop_list[[i]]))
+  lengthb <- length(unique(spec_list[[i]]))
+  lengthc <- lengtha/lengthb
+  popspec_list[[i]] <- lengthc
   
 }
 
@@ -234,7 +234,7 @@ grp.ind.mean.list <- list()
 grp.indl.list <- list()
 # loop over taxonomic groups
 #for (i in 1:length(pop_list)) {
-for (i in 29) {
+for (i in 30) {
   
   if (!any(!is.na(pop_list[[i]]))) {
     
@@ -277,7 +277,7 @@ for (i in 29) {
   grp_gam <- pop_gam_fn(group_data_culled, c2, m_colnames2, n=1000, lambda=TRUE, resample=TRUE, quality=FALSE)
   
   # create species indices
-  grp_spec <- species_index_fn(grp_gam[,21:length(grp_gam)], c, m_colnames, n=1000, n_boot=3000, lambda=TRUE, resample=TRUE)
+  grp_spec <- species_index_fn(grp_gam[,21:length(grp_gam)], c, n=1000, n_boot=3000, lambda=TRUE, resample=TRUE)
   
   # add species indices to species indices list
   spec.ind.list[[i]] <- grp_spec
