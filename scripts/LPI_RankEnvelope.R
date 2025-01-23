@@ -3,6 +3,7 @@ library(dplyr)
 library(mgcv)
 library(matrixStats)
 library(ggplot2)
+library(grid)
 library(gridExtra)
 
 # load functions ----
@@ -234,7 +235,7 @@ grp.ind.mean.list <- list()
 grp.indl.list <- list()
 # loop over taxonomic groups
 #for (i in 1:length(pop_list)) {
-for (i in 30) {
+for (i in 1:length(tax_list)) {
   
   if (!any(!is.na(pop_list[[i]]))) {
     
@@ -452,6 +453,8 @@ saveRDS(sys.ci.list, file="files/sys_ci_list.RData")
 
 #sys.ind.mean.list <- readRDS(file="files/sys_ind_mean_list.RData")
 #sys.indl.list <- readRDS(file="files/sys_indl_list.RData")
+#sys.ci.list <- readRDS(file="files/sys_ci_list.RData")
+#sys.ind.list <- readRDS(file="files/sys_ind_list.RData")
 
 # calculate final index and CIs for LPI using rank envelope method
 
@@ -1737,13 +1740,15 @@ ggplot(plot1data, aes(x = Year, y = Index/100))+
         axis.title.x = element_blank(),
         strip.text.x = element_text(size = 12, face = "bold"),
         strip.text.y = element_text(size = 9, face = "bold"))+
-  scale_y_continuous(trans = "identity", breaks = seq(0, 2.2, 0.2))+
-  scale_x_continuous(breaks = seq(1970, 2020, 5))+
+  scale_y_continuous(trans = "identity", breaks = seq(0, 2.2, 0.2),
+                     labels = c("0.0", "", "0.4", "", "0.8", "", "1.2", "", "1.6", "", "2.0", ""))+
+  scale_x_continuous(breaks = seq(1970, 2020, 5),
+                     labels = c("1970", "", "1980", "", "1990", "", "2000", "", "2010", "", "2020"))+
   facet_grid(Trend~Method, 
              scales = "free_y", 
              labeller = labeller(Trend = trend.labs.plot1))
 
-ggsave(filename = "ci_comparison_lpi3.tiff",
+ggsave(filename = "ci_comparison_lpi3_new.tiff",
        plot = last_plot(),
        device = "tiff",
        width = 6000,
@@ -1786,7 +1791,8 @@ plot_trends <- function(trend_list, names_list, plot_num) {
           strip.text.x = element_text(size = 12, face = "bold"),
           strip.text.y = element_text(size = 9, face = "bold"))+
     scale_y_continuous(trans = "identity")+
-    scale_x_continuous(breaks = seq(1970, 2020, 5))+
+    scale_x_continuous(breaks = seq(1970, 2020, 5),
+                       labels = c("1970", "", "1980", "", "1990", "", "2000", "", "2010", "", "2020"))+
     facet_grid(Trend~Method, 
                scales = "free_y", 
                labeller = labeller(Trend = trend.labs.plot))
