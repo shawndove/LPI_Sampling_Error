@@ -532,3 +532,61 @@ stopCluster(cl) # stop the cluster
 # }
 # 
 # stopCluster(cl) # stop the cluster
+
+#################
+
+#8# Test for CI width across sample sizes when there are a lot of outlier growth rates
+iter_num <- 30000
+gr_mean_a <- 0
+gr_sd_vec_a <- 0.5
+sd_mean <- 0.3
+#sd_mean <- rep(0.3, each=12)
+samp_size_ <- rep(c(20, 50, 200, 500), each = 20)
+mlength_ <- 20
+numobs_ <- ceiling(0.5*mlength_)
+popspec <- 20
+mean_cv <- 2
+cv_sd <- 2
+
+no_cores <- 8 # the number of cores to be used for parallel processing
+cl <- makeCluster(no_cores, outfile="TestData/output.txt") # create cluster for parallel processing
+registerDoSNOW(cl) # register the cluster
+clusterEvalQ(cl, c(library(tcltk),  # send necessary functions to the cluster
+                   library(dplyr), 
+                   library(MASS), 
+                   library(GET), 
+                   library(mgcv), 
+                   library(reshape2), 
+                   library(matrixStats),
+                   library(TSdist)))
+
+# load the main function into memory
+source("scripts/Main_Function.R")
+
+# call the main function
+foreach(i = 1:80) %dopar% {  # loop for parallel processing
+  all_fn(popvar = gr_sd_vec_a, # variance in mean growth rate
+         popmean = gr_mean_a, # mean growth rate
+         sdmean =  sd_mean, # mean of standard deviations in growth rates
+         pgrowthx = 7, # which time series generator to use
+         iter_num = (iter_num+i), 
+         tmax = tmax, # number of years
+         tpops = tpops, # total number of time series
+         popspec = popspec, # mean number of populations per species
+         n = n, # number of GAM resamples 
+         n_boot = n_boot, # number of index bootstraps for each species
+         boots = boots, # number of bootstrap resamples for confidence intervals for lpi method
+         count_thres = count_thres, # minimum number of population counts
+         min_ts_length = min_ts_length, # minimum time series length
+         c = c, # number of columns (years: same as tmax)
+         samp_size = samp_size_[i], # number of time series in each sample
+         m_colnames = m_colnames, # column names
+         mlength = mlength_, # mean length of time series 
+         numobs = numobs_, # mean number of observations in each time series
+         bootstrap_size = bootstrap_size, # number of samples
+         error = TRUE,  # add observation error
+         mean_cv = mean_cv, # mean coefficient of variation for observation error
+         cv_sd = cv_sd)# standard deviation of coefficient of variation for observation error
+}
+
+stopCluster(cl) # stop the cluster
