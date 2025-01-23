@@ -536,17 +536,17 @@ stopCluster(cl) # stop the cluster
 #################
 
 #8# Test for CI width across sample sizes when there are a lot of outlier growth rates
-iter_num <- 30000
-gr_mean_a <- 0
-gr_sd_vec_a <- 0.5
-sd_mean <- 0.3
+iter_num <- 30000 # this is the iteration number
+gr_mean_a <- 0 # this is the mean growth rate
+gr_sd_vec_a <- rep(rep(c(0.1, 0.2, 0.4, 0.7, 1), each = 10), each = 4) # this is the variance in mean growth rate
+sd_mean <- 0.2 # this is the mean of standard deviations in growth rates
 #sd_mean <- rep(0.3, each=12)
-samp_size_ <- rep(c(20, 50, 200, 500), each = 20)
-mlength_ <- 20
-numobs_ <- ceiling(0.5*mlength_)
-popspec <- 20
-mean_cv <- 2
-cv_sd <- 2
+samp_size_ <- rep(c(20, 50, 200, 500), each = 50) # number of time series in each sample
+mlength_ <- 20 # mean length of time series
+numobs_ <- ceiling(0.5*mlength_) # mean number of observations in each time series
+popspec <- 20 # mean number of populations per species
+mean_cv <- 0.3 # mean coefficient of variation for observation error
+cv_sd <- 0.2 # standard deviation of coefficient of variation for observation error
 
 no_cores <- 8 # the number of cores to be used for parallel processing
 cl <- makeCluster(no_cores, outfile="TestData/output.txt") # create cluster for parallel processing
@@ -564,8 +564,8 @@ clusterEvalQ(cl, c(library(tcltk),  # send necessary functions to the cluster
 source("scripts/Main_Function.R")
 
 # call the main function
-foreach(i = 1:80) %dopar% {  # loop for parallel processing
-  all_fn(popvar = gr_sd_vec_a, # variance in mean growth rate
+foreach(i = 1:200) %dopar% {  # loop for parallel processing
+  all_fn(popvar = gr_sd_vec_a[i], # variance in mean growth rate
          popmean = gr_mean_a, # mean growth rate
          sdmean =  sd_mean, # mean of standard deviations in growth rates
          pgrowthx = 7, # which time series generator to use
